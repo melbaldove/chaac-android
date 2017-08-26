@@ -8,6 +8,7 @@ import butterknife.OnClick
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.util.ChaacUtil
+import java.io.File
 import javax.inject.Inject
 
 
