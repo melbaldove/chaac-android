@@ -7,14 +7,14 @@ import org.mb.m3r.chaac.ui.base.BaseView
  * @author Melby Baldove
  */
 interface PhotoContract {
-    interface View : BaseView{
-        fun takePicture()
+    interface View : BaseView {
+        fun addPictures()
     }
 
     interface Presenter : BasePresenter {
-        fun onCameraClick()
+        fun pictureTaken()
 
-        fun savePicture()
+        fun savePictureFromTemp(path: String)
 
         fun loadPictures()
     }

@@ -1,25 +1,53 @@
 package org.mb.m3r.chaac.ui.photo
 
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
-
+import android.provider.MediaStore
+import android.support.v7.app.AppCompatActivity
+import butterknife.ButterKnife
+import butterknife.OnClick
 import org.mb.m3r.chaac.R
-import org.mb.m3r.chaac.ui.base.BasePresenter
-import org.mb.m3r.chaac.ui.base.BaseView
+import org.mb.m3r.chaac.util.ChaacUtil
 import javax.inject.Inject
+
 
 class PhotoActivity : AppCompatActivity(), PhotoContract.View {
 
     @Inject
-    lateinit var presenter : PhotoContract.Presenter
+    lateinit var presenter: PhotoContract.Presenter
 
-    override fun takePicture() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    private var imageTempPath: String? = null
+
+    val REQUEST_IMAGE_CAPTURE = 20
+    val REQUEST_SAVE_IMAGE = 21
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ButterKnife.bind(this)
+    }
+
+    override fun addPictures() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    @OnClick(R.id.btnCamera)
+    fun cameraOnClick() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            ChaacUtil.createTempImageFile().let {
+                imageTempPath = it.absolutePath
+                val uri = Uri.fromFile(it)
+                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            }
+        }
+
+        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            //presenter.savePictureFromTemp(imageTempPath!!)
+        }
     }
 }
