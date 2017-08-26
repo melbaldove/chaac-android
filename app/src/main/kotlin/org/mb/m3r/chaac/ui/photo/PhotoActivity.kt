@@ -4,15 +4,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
-import butterknife.ButterKnife
 import butterknife.OnClick
 import org.mb.m3r.chaac.R
+import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.util.ChaacUtil
 import javax.inject.Inject
 
 
-class PhotoActivity : AppCompatActivity(), PhotoContract.View {
+class PhotoActivity : BaseActivity(), PhotoContract.View {
+    override val layoutRes: Int = R.layout.activity_main
 
     @Inject
     lateinit var presenter: PhotoContract.Presenter
@@ -24,8 +24,7 @@ class PhotoActivity : AppCompatActivity(), PhotoContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
+        activityComponent.inject(this)
     }
 
     override fun addPictures() {
@@ -47,7 +46,7 @@ class PhotoActivity : AppCompatActivity(), PhotoContract.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //presenter.savePictureFromTemp(imageTempPath!!)
+            presenter.savePictureFromTemp(imageTempPath!!)
         }
     }
 }

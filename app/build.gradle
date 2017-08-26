@@ -29,12 +29,13 @@ android {
 }
 
 kapt {
-    correctErrorTypes = true
+    generateStubs = true
 }
 
 
 dependencies {
     def supportLibraryVersion = "25.3.1"
+    def daggerVersion = "2.11"
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
@@ -43,9 +44,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     // dagger2
-    compile 'com.google.dagger:dagger-android:2.11'
-    compile 'com.google.dagger:dagger-android-support:2.11' // if you use the support libraries
-    kapt 'com.google.dagger:dagger-android-processor:2.11'
+    compile "com.google.dagger:dagger-android:$daggerVersion"
+    compile "com.google.dagger:dagger-android-support:$daggerVersion" // if you use the support libraries
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // Rx
     compile 'io.reactivex.rxjava2:rxjava:2.1.3'

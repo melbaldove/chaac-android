@@ -5,6 +5,4 @@ package org.mb.m3r.chaac.data
  */
 interface PhotoRepository {
     fun savePicture()
-
-
 }
