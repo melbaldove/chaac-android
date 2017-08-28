@@ -8,7 +8,6 @@ import butterknife.OnClick
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.util.ChaacUtil
-import java.io.File
 import javax.inject.Inject
 
 
@@ -37,8 +36,7 @@ class PhotoActivity : BaseActivity(), PhotoContract.View {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             ChaacUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
-                val uri = Uri.fromFile(it)
-                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(it))
             }
         }
 

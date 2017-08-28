@@ -13,4 +13,5 @@ import org.mb.m3r.chaac.ui.photo.PhotoModule
         modules = arrayOf(PhotoModule::class))
 interface ActivityComponent {
     fun inject(activity: PhotoActivity)
+
 }
