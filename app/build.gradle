@@ -45,7 +45,8 @@ dependencies {
 
     // dagger2
     compile "com.google.dagger:dagger-android:$daggerVersion"
-    compile "com.google.dagger:dagger-android-support:$daggerVersion" // if you use the support libraries
+    compile "com.google.dagger:dagger-android-support:$daggerVersion"
+    // if you use the support libraries
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
@@ -61,7 +62,6 @@ dependencies {
 
     // Misc
     compile 'commons-io:commons-io:2.4'
-
 
 
 }

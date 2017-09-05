@@ -3,7 +3,6 @@ package org.mb.m3r.chaac.ui.photo
 import io.reactivex.disposables.CompositeDisposable
 import org.mb.m3r.chaac.data.PhotoRepository
 import org.mb.m3r.chaac.util.ChaacUtil
-import java.io.File
 import javax.inject.Inject
 
 class PhotoPresenter

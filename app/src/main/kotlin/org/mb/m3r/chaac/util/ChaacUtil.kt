@@ -1,7 +1,7 @@
 package org.mb.m3r.chaac.util
 
-import android.content.Context
-import android.os.Environment.*
+import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Environment.getExternalStoragePublicDirectory
 import android.util.Log
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -48,7 +48,7 @@ object ChaacUtil {
         try {
             FileUtils.copyFile(source, dest)
             source.delete()
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             Log.e("Error", e.message)
         }
 
