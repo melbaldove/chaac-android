@@ -9,7 +9,6 @@ import javax.inject.Provider
 
 
 class PhotoActivity : BaseActivity() {
-    override val layoutRes: Int = R.layout.activity_main
 
     @Inject
     lateinit var fragmentProvider: Provider<PhotoFragment>
@@ -17,6 +16,6 @@ class PhotoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent.inject(this)
-        ActivityUtil.addFragmentToActivity(fragmentManager, R.id.photo_frag_container, fragmentProvider.get())
+        ActivityUtil.addFragmentToActivity(supportFragmentManager, R.id.frag_container, fragmentProvider.get())
     }
 }

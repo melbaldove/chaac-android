@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.OnClick
 import org.mb.m3r.chaac.R
+import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ChaacUtil
 import javax.inject.Inject
@@ -34,6 +35,8 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -41,9 +44,8 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         fragmentComponent.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            super.onCreateView(inflater, container, savedInstanceState)
 
     @OnClick(R.id.btnCamera)
     fun cameraOnClick() {

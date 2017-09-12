@@ -1,7 +1,7 @@
 package org.mb.m3r.chaac.util
 
-import android.app.Fragment
-import android.app.FragmentManager
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 
 /**
  * @author Melby Baldove

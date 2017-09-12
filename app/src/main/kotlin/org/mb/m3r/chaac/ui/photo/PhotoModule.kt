@@ -25,6 +25,7 @@ class PhotoModule {
         @Provides
         fun providePhotoFragment(): PhotoFragment = PhotoFragment()
     }
+
     @Module
     class Fragment {
         @PerFragment

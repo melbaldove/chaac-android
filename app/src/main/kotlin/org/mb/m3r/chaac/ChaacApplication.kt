@@ -21,6 +21,5 @@ class ChaacApplication : Application() {
                 .application(this)
                 .build()
     }
-
 }
 
