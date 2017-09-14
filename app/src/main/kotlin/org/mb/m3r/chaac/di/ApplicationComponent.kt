@@ -4,8 +4,8 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import org.mb.m3r.chaac.ChaacApplication
-import org.mb.m3r.chaac.data.PhotoRepository
-import org.mb.m3r.chaac.data.RepositoryModule
+import org.mb.m3r.chaac.data.source.PhotoRepository
+import org.mb.m3r.chaac.data.source.RepositoryModule
 import org.mb.m3r.chaac.di.scopes.PerApplication
 
 
@@ -13,7 +13,7 @@ import org.mb.m3r.chaac.di.scopes.PerApplication
  * @author Melby Baldove
  */
 @PerApplication
-@Component(modules = arrayOf(RepositoryModule::class))
+@Component(modules = arrayOf(RepositoryModule::class, ApplicationModule::class))
 interface ApplicationComponent {
     fun inject(app: ChaacApplication)
 

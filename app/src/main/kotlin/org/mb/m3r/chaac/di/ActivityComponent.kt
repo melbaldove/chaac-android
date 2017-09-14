@@ -1,7 +1,7 @@
 package org.mb.m3r.chaac.di
 
 import dagger.Component
-import org.mb.m3r.chaac.data.PhotoRepository
+import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.di.scopes.PerActivity
 import org.mb.m3r.chaac.ui.photo.PhotoActivity
 import org.mb.m3r.chaac.ui.photo.PhotoContract

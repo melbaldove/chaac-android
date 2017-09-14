@@ -36,6 +36,7 @@ kapt {
 dependencies {
     def supportLibraryVersion = "25.3.1"
     def daggerVersion = "2.11"
+    def requeryVersion = "1.4.0"
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
@@ -60,6 +61,13 @@ dependencies {
     // Butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    // Requery
+    compile "io.requery:requery:$requeryVersion"
+    compile "io.requery:requery-kotlin:$requeryVersion"
+    compile "io.requery:requery-android:$requeryVersion" // for android
+    compile "io.requery:sqlite-android:3.20.0"
+    kapt "io.requery:requery-processor:$requeryVersion"
 
     // Misc
     compile 'commons-io:commons-io:2.4'
