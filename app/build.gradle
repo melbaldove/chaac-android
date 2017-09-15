@@ -23,15 +23,16 @@ android {
             minifyEnabled false
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
 kapt {
     generateStubs = true
 }
-
 
 dependencies {
     def supportLibraryVersion = "25.3.1"
@@ -42,10 +43,14 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
-    // dagger2
+    // Testing
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    androidTestCompile 'org.mockito:mockito-android:2.7.22'
+
+    // Dagger2
     compile "com.google.dagger:dagger-android:$daggerVersion"
     compile "com.google.dagger:dagger-android-support:$daggerVersion"
     // if you use the support libraries
