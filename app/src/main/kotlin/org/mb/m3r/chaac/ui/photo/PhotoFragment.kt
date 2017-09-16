@@ -1,5 +1,8 @@
 package org.mb.m3r.chaac.ui.photo
 
+import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +15,7 @@ import butterknife.OnClick
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
+import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.ChaacUtil
 import javax.inject.Inject
 
@@ -36,7 +40,6 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,20 +52,34 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     @OnClick(R.id.btnCamera)
     fun cameraOnClick() {
+        takePicture()
+    }
+
+    private fun takePicture() {
+        if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
+            return
+        }
+        if (!ActivityUtil.hasPermission(context, CAMERA)) {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), ActivityUtil.PERMISSION_REQUEST_CAMERA)
+            return
+        }
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             ChaacUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
                 putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(it))
             }
         }
-
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(activity.packageManager) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
-            PERMISSION_REQUEST_WRITE_EXTERNAL -> takePicture()
+        when (requestCode) {
+            ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL,
+            ActivityUtil.PERMISSION_REQUEST_CAMERA -> takePicture()
         }
 
     }
