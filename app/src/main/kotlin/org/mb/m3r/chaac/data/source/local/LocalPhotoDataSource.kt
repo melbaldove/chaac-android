@@ -1,6 +1,6 @@
 package org.mb.m3r.chaac.data.source.local
 
-import io.reactivex.Observable
+import io.reactivex.Flowable
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
 
@@ -10,8 +10,8 @@ import org.mb.m3r.chaac.data.source.PhotoRepository
  */
 class LocalPhotoDataSource(private val db: Database) : PhotoRepository {
     override fun savePhoto(photo: Photo) {
-        db.store().insert(photo)
+        db.store().insert(photo).subscribe()
     }
 
-    override fun getPhotos(): Observable<Photo> = db.store().select(Photo::class).get().observable()
+    override fun getPhotos(): Flowable<Photo> = db.store().select(Photo::class).get().flowable()
 }

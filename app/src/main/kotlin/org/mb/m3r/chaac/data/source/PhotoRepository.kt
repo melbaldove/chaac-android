@@ -1,6 +1,6 @@
 package org.mb.m3r.chaac.data.source
 
-import io.reactivex.Observable
+import io.reactivex.Flowable
 import org.mb.m3r.chaac.data.Photo
 
 /**
@@ -9,5 +9,5 @@ import org.mb.m3r.chaac.data.Photo
 interface PhotoRepository {
     fun savePhoto(photo: Photo)
 
-    fun getPhotos(): Observable<Photo>
+    fun getPhotos(): Flowable<Photo>
 }
