@@ -14,7 +14,7 @@ interface PhotoContract {
     interface Presenter : BasePresenter {
         fun pictureTaken()
 
-        fun savePictureFromTemp(path: String)
+        fun savePhotoFromTemp(path: String)
 
         fun loadPictures()
     }

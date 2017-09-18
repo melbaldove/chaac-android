@@ -28,8 +28,18 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
         TODO("implement this")
     }
 
-    override fun savePictureFromTemp(path: String) {
-        val image = ChaacUtil.saveImageFromTempFile(path)
+    /**
+     * @param {String} path - path where temporary image was stored
+     */
+    override fun savePhotoFromTemp(path: String) {
+        val photoFile = ChaacUtil.storeImage(path)
+        ChaacUtil.checkSum(photoFile).subscribe({ checksum ->
+            // TODO: implement caption handling
+            val photo = Photo(checksum = checksum, path = path, caption = null)
+            repo.savePhoto(photo)
+        }) { throwable ->
+            // TODO: Handle errors
+        }.let { subscriptions.add(it) }
     }
 
     override fun loadPictures() {

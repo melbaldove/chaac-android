@@ -59,9 +59,17 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            PERMISSION_REQUEST_WRITE_EXTERNAL -> takePicture()
+        }
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            presenter.savePictureFromTemp(imageTempPath!!)
+            presenter.savePhotoFromTemp(imageTempPath!!)
         }
     }
 }
