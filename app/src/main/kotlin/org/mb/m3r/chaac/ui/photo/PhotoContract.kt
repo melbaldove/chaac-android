@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.ui.photo
 
+import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.base.BasePresenter
 import org.mb.m3r.chaac.ui.base.BaseView
 

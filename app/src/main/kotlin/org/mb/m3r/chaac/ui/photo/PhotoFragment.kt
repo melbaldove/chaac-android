@@ -8,11 +8,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.OnClick
+import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
+import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
@@ -23,19 +26,18 @@ import javax.inject.Inject
  * @author Melby Baldove
  */
 class PhotoFragment : BaseFragment(), PhotoContract.View {
+
     override val layoutRes: Int = R.layout.photo_frag
 
     @Inject
     lateinit var presenter: PhotoContract.Presenter
 
+    lateinit var photoAdapter: PhotoAdapter
+
     private var imageTempPath: String? = null
 
     val REQUEST_IMAGE_CAPTURE = 20
     val REQUEST_SAVE_IMAGE = 21
-
-    override fun addPictures() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +47,21 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         fragmentComponent.inject(this)
+        photo_recycler_view.layoutManager = LinearLayoutManager(context)
+        presenter.subscribe()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             super.onCreateView(inflater, container, savedInstanceState)
+
+    override fun addPhotos(photos: List<Photo>) {
+        photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
+        photo_recycler_view.adapter = photoAdapter
+    }
+
+    override fun addPhoto(photo: Photo) {
+        photoAdapter.addPhoto(photo)
+    }
 
     @OnClick(R.id.btnCamera)
     fun cameraOnClick() {
