@@ -4,6 +4,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.util.ChaacUtil
+import org.mb.m3r.chaac.util.schedulers.SchedulerProvider
 import javax.inject.Inject
 
 /**
@@ -12,9 +13,9 @@ import javax.inject.Inject
  */
 class PhotoPresenter
 @Inject
-constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoContract.Presenter {
 
-    lateinit var subscriptions: CompositeDisposable
+constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedulerProvider: SchedulerProvider) : PhotoContract.Presenter {
+    val subscriptions: CompositeDisposable = CompositeDisposable()
 
     override fun subscribe() {
         loadPictures()
