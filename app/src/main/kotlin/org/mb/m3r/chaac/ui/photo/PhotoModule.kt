@@ -15,15 +15,11 @@ class PhotoModule {
     class Activity {
         @PerActivity
         @Provides
-        fun providePhotoActivity(): PhotoActivity = PhotoActivity()
+        fun providePhotoView(fragment: PhotoFragment): PhotoContract.View = fragment
 
         @PerActivity
         @Provides
-        fun providePhotoView(): PhotoContract.View = providePhotoFragment()
-
-        @PerActivity
-        @Provides
-        fun providePhotoFragment(): PhotoFragment = PhotoFragment()
+        fun providePhotoFragment() = PhotoFragment()
     }
 
     @Module

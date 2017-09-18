@@ -22,6 +22,8 @@ abstract class BaseActivity : AppCompatActivity() {
     open val layoutRes: Int = R.layout.activity_main
     lateinit var mToggle: ActionBarDrawerToggle
 
+    lateinit var activityComponent: ActivityComponent
+
     @BindView(R.id.drawer_layout)
     lateinit var mDrawerLayout: DrawerLayout
 
@@ -34,6 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
         ButterKnife.bind(this)
         setSupportActionBar(mToolbar)
         initDrawer()
+        initActivityComponent()
     }
 
     private fun initDrawer() {
@@ -42,6 +45,14 @@ abstract class BaseActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
+        }
+    }
+
+    private fun initActivityComponent() {
+        activityComponent = (application as ChaacApplication).applicationComponent.let {
+            DaggerActivityComponent.builder()
+                    .applicationComponent(it)
+                    .build()
         }
     }
 
@@ -69,12 +80,4 @@ abstract class BaseActivity : AppCompatActivity() {
     fun setActionBarTitle(title: String) {
         supportActionBar?.title = title
     }
-
-    val activityComponent: ActivityComponent
-        get() {
-            val applicationComponent = (application as ChaacApplication).applicationComponent
-            return DaggerActivityComponent.builder()
-                    .applicationComponent(applicationComponent)
-                    .build()
-        }
 }

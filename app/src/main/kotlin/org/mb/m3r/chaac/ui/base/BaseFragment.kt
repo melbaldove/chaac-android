@@ -20,11 +20,21 @@ abstract class BaseFragment : Fragment() {
     @get:LayoutRes
     protected abstract val layoutRes: Int
 
+    lateinit var fragmentComponent: FragmentComponent
+
     private lateinit var unbinder: Unbinder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initFragmentComponent()
+    }
 
+    private fun initFragmentComponent() {
+        fragmentComponent = (activity as BaseActivity).activityComponent.let {
+            DaggerFragmentComponent.builder()
+                    .activityComponent(it)
+                    .build()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,12 +48,4 @@ abstract class BaseFragment : Fragment() {
         super.onDestroyView()
         unbinder.unbind()
     }
-
-    val fragmentComponent: FragmentComponent
-        get() {
-            val activityComponent = (activity as BaseActivity).activityComponent
-            return DaggerFragmentComponent.builder()
-                    .activityComponent(activityComponent)
-                    .build()
-        }
 }
