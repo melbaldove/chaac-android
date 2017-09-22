@@ -38,11 +38,15 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
                     .centerCrop()
                     .into(imageView)
         }
+
     }
 
     fun addPhoto(photo: Photo) {
         photos.add(photo)
         this.notifyItemInserted(photos.size)
     }
+
+    val size: Int
+        get() = photos.size
 
 }

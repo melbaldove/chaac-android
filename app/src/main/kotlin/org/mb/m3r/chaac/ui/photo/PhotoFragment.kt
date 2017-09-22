@@ -47,7 +47,10 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         super.onActivityCreated(savedInstanceState)
         (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
         fragmentComponent.inject(this)
-        photo_recycler_view.layoutManager = LinearLayoutManager(context)
+        photo_recycler_view.layoutManager = LinearLayoutManager(context).apply {
+            reverseLayout = true
+            stackFromEnd = true
+        }
         presenter.subscribe()
     }
 
@@ -57,10 +60,13 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun addPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
         photo_recycler_view.adapter = photoAdapter
+
     }
 
     override fun addPhoto(photo: Photo) {
         photoAdapter.addPhoto(photo)
+        // scrolls to first item since items are in descending order
+        photo_recycler_view.scrollToPosition(photoAdapter.size - 1)
     }
 
     @OnClick(R.id.btnCamera)

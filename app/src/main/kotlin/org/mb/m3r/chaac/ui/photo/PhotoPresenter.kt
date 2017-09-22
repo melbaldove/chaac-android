@@ -36,7 +36,7 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedul
         val photoFile = ChaacUtil.storeImage(path)
         ChaacUtil.checkSum(photoFile).observeOn(schedulerProvider.ui()).subscribe({ checksum ->
             // TODO: implement caption handling
-            Photo(checksum = checksum, path = photoFile.path, caption = null).let {
+            Photo(checksum = checksum, path = photoFile.path, caption = null, createdDate = System.currentTimeMillis()).let {
                 repo.savePhoto(it)
                 view.addPhoto(it)
             }
@@ -47,7 +47,7 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedul
 
     override fun loadPhotos() {
         repo.getPhotos().subscribeOn(schedulerProvider.io())
-                .toList()
+                .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
                 .observeOn(schedulerProvider.ui())
                 .subscribe({ photoList ->
                     view.addPhotos(photoList)
