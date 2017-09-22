@@ -41,11 +41,11 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
         fragmentComponent.inject(this)
         photo_recycler_view.layoutManager = LinearLayoutManager(context)
         presenter.subscribe()
