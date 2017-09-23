@@ -5,7 +5,6 @@ import dagger.Provides
 import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.di.scopes.PerActivity
 import org.mb.m3r.chaac.di.scopes.PerFragment
-import org.mb.m3r.chaac.util.schedulers.SchedulerProvider
 
 /**
  * @author Melby Baldove
@@ -29,8 +28,6 @@ class PhotoModule {
         @PerFragment
         fun providePhotoPresenter(
                 view: PhotoContract.View,
-                repository: PhotoRepository,
-                schedulerProvider: SchedulerProvider): PhotoContract.Presenter =
-                PhotoPresenter(view, repository, schedulerProvider)
+                repository: PhotoRepository): PhotoContract.Presenter = PhotoPresenter(view, repository)
     }
 }

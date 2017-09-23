@@ -4,7 +4,6 @@ import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Environment.getExternalStoragePublicDirectory
 import android.util.Log
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
@@ -87,6 +86,6 @@ object ChaacUtil {
         } finally {
             IOUtils.closeQuietly(fileInputStream)
         }
-    }.subscribeOn(Schedulers.io())
+    }
 
 }

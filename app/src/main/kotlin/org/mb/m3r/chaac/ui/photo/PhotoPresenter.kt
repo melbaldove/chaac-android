@@ -4,7 +4,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.util.ChaacUtil
-import org.mb.m3r.chaac.util.schedulers.SchedulerProvider
+import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 import javax.inject.Inject
 
 /**
@@ -13,7 +13,7 @@ import javax.inject.Inject
  */
 class PhotoPresenter
 @Inject
-constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedulerProvider: SchedulerProvider) : PhotoContract.Presenter {
+constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoContract.Presenter {
 
     val subscriptions: CompositeDisposable = CompositeDisposable()
 
@@ -34,21 +34,23 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedul
      */
     override fun savePhotoFromTemp(path: String) {
         val photoFile = ChaacUtil.storeImage(path)
-        ChaacUtil.checkSum(photoFile).observeOn(schedulerProvider.ui()).subscribe({ checksum ->
-            // TODO: implement caption handling
-            Photo(checksum = checksum, path = photoFile.path, caption = null, createdDate = System.currentTimeMillis()).let {
-                repo.savePhoto(it)
-                view.addPhoto(it)
-            }
-        }) { throwable ->
-            // TODO: Handle errors
-        }.let { subscriptions.add(it) }
+        ChaacUtil.checkSum(photoFile)
+                .compose(SchedulerUtil.ioToUi())
+                .subscribe({ checksum ->
+                    // TODO: implement caption handling
+                    Photo(checksum = checksum, path = photoFile.path, caption = null, createdDate = System.currentTimeMillis()).let {
+                        repo.savePhoto(it)
+                        view.addPhoto(it)
+                    }
+                }) { throwable ->
+                    // TODO: Handle errors
+                }.let { subscriptions.add(it) }
     }
 
     override fun loadPhotos() {
-        repo.getPhotos().subscribeOn(schedulerProvider.io())
+        repo.getPhotos()
+                .compose(SchedulerUtil.ioToUi())
                 .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
-                .observeOn(schedulerProvider.ui())
                 .subscribe({ photoList ->
                     view.addPhotos(photoList)
                 }).let { subscriptions.add(it) }
