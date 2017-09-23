@@ -13,19 +13,19 @@ import javax.inject.Inject
  */
 class PhotoPresenter
 @Inject
-
 constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedulerProvider: SchedulerProvider) : PhotoContract.Presenter {
+
     val subscriptions: CompositeDisposable = CompositeDisposable()
 
     override fun subscribe() {
-        loadPictures()
+        loadPhotos()
     }
 
     override fun unsubscribe() {
         subscriptions.dispose()
     }
 
-    override fun pictureTaken() {
+    override fun photoTaken() {
         TODO("implement this")
     }
 
@@ -34,16 +34,23 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository, val schedul
      */
     override fun savePhotoFromTemp(path: String) {
         val photoFile = ChaacUtil.storeImage(path)
-        ChaacUtil.checkSum(photoFile).subscribe({ checksum ->
+        ChaacUtil.checkSum(photoFile).observeOn(schedulerProvider.ui()).subscribe({ checksum ->
             // TODO: implement caption handling
-            val photo = Photo(checksum = checksum, path = path, caption = null)
-            repo.savePhoto(photo)
+            Photo(checksum = checksum, path = photoFile.path, caption = null, createdDate = System.currentTimeMillis()).let {
+                repo.savePhoto(it)
+                view.addPhoto(it)
+            }
         }) { throwable ->
             // TODO: Handle errors
         }.let { subscriptions.add(it) }
     }
 
-    override fun loadPictures() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun loadPhotos() {
+        repo.getPhotos().subscribeOn(schedulerProvider.io())
+                .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
+                .observeOn(schedulerProvider.ui())
+                .subscribe({ photoList ->
+                    view.addPhotos(photoList)
+                }).let { subscriptions.add(it) }
     }
 }

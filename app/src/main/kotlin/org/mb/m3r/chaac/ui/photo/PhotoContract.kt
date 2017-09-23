@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.ui.photo
 
+import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.base.BasePresenter
 import org.mb.m3r.chaac.ui.base.BaseView
 
@@ -8,14 +9,16 @@ import org.mb.m3r.chaac.ui.base.BaseView
  */
 interface PhotoContract {
     interface View : BaseView {
-        fun addPictures()
+        fun addPhotos(photos: List<Photo>)
+
+        fun addPhoto(photo: Photo)
     }
 
     interface Presenter : BasePresenter {
-        fun pictureTaken()
+        fun photoTaken()
 
         fun savePhotoFromTemp(path: String)
 
-        fun loadPictures()
+        fun loadPhotos()
     }
 }

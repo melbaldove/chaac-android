@@ -79,7 +79,7 @@ object ChaacUtil {
              * This is a workaround to a bug described in this link
              * https://stackoverflow.com/questions/9126567/method-not-found-using-digestutils-in-android
              */
-            val checksum = String(Hex.encodeHex(DigestUtils.md5(IOUtils.toByteArray(fileInputStream))))
+            val checksum = String(Hex.encodeHex(DigestUtils.sha1(IOUtils.toByteArray(fileInputStream))))
             subscriber.onSuccess(checksum)
         } catch (e: IOException) {
             e.printStackTrace()
