@@ -16,11 +16,13 @@ import butterknife.OnClick
 import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
+import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.ChaacUtil
 import javax.inject.Inject
+
 
 /**
  * @author Melby Baldove
@@ -47,10 +49,9 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         super.onActivityCreated(savedInstanceState)
         (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
         fragmentComponent.inject(this)
-        photo_recycler_view.layoutManager = LinearLayoutManager(context).apply {
-            reverseLayout = true
-            stackFromEnd = true
-        }
+        // show items in reverse(descending) order
+        photo_recycler_view.layoutManager = SnappingLinearLayoutManager(context,
+                LinearLayoutManager.VERTICAL, true).apply { stackFromEnd = true }
         presenter.subscribe()
     }
 
@@ -60,13 +61,11 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun addPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
         photo_recycler_view.adapter = photoAdapter
-
     }
 
     override fun addPhoto(photo: Photo) {
         photoAdapter.addPhoto(photo)
-        // scrolls to first item since items are in descending order
-        photo_recycler_view.scrollToPosition(photoAdapter.size - 1)
+        photo_recycler_view.smoothScrollToPosition(photoAdapter.size - 1)
     }
 
     @OnClick(R.id.btnCamera)

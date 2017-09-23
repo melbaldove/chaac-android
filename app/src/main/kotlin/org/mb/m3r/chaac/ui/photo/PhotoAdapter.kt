@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.photo_item.view.*
 import org.mb.m3r.chaac.GlideApp
 import org.mb.m3r.chaac.R
@@ -36,6 +37,7 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
             GlideApp.with(view.context)
                     .load(photo.path)
                     .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView)
         }
 
