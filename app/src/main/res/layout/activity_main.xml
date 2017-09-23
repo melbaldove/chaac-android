@@ -3,10 +3,12 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <include
             layout="@layout/toolbar"
             android:layout_width="match_parent"
@@ -24,7 +26,5 @@
         android:layout_height="match_parent"
         app:menu="@menu/navigation_menu"
         android:layout_gravity="start"
-        app:headerLayout="@layout/navigation_header"
-        >
-    </android.support.design.widget.NavigationView>
+        app:headerLayout="@layout/navigation_header"></android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
