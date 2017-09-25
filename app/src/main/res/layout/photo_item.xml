@@ -9,11 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="144dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/material_card_edge_margin"
-        android:layout_marginStart="@dimen/material_card_edge_margin"
-        android:layout_marginRight="@dimen/material_card_edge_margin"
-        android:layout_marginEnd="@dimen/material_card_edge_margin"
         android:layout_marginBottom="@dimen/material_card_gutter"
+        android:layout_marginEnd="@dimen/material_card_edge_margin"
+        android:layout_marginLeft="@dimen/material_card_edge_margin"
+        android:layout_marginRight="@dimen/material_card_edge_margin"
+        android:layout_marginStart="@dimen/material_card_edge_margin"
         card_view:cardCornerRadius="@dimen/material_card_corner_radius"
         card_view:cardElevation="@dimen/material_card_elevation_resting">
 
@@ -34,18 +34,40 @@
                 android:id="@+id/imageCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/photoView"
-                android:layout_toEndOf="@id/photoView"
                 android:layout_alignParentTop="true"
-                android:layout_margin="8dp"
-                android:text="@string/no_caption" />
+                android:layout_marginBottom="@dimen/material_baseline_grid_0.5x"
+                android:layout_marginEnd="@dimen/material_baseline_grid_1x"
+                android:layout_marginLeft="@dimen/material_baseline_grid_1x"
+                android:layout_marginRight="@dimen/material_baseline_grid_1x"
+                android:layout_marginStart="@dimen/material_baseline_grid_1x"
+                android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                android:layout_toEndOf="@id/photoView"
+                android:layout_toRightOf="@id/photoView"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/material_subheader_text_size" />
+
+
+            <TextView
+                android:id="@+id/imageRemarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imageCaption"
+                android:layout_marginBottom="@dimen/material_baseline_grid_1x"
+                android:layout_marginEnd="@dimen/material_baseline_grid_1x"
+                android:layout_marginLeft="@dimen/material_baseline_grid_1x"
+                android:layout_marginRight="@dimen/material_baseline_grid_1x"
+                android:layout_marginStart="@dimen/material_baseline_grid_1x"
+                android:layout_marginTop="@dimen/material_baseline_grid_0.5x"
+                android:layout_toEndOf="@id/photoView"
+                android:layout_toRightOf="@id/photoView"
+                android:lines="6" />
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:src="@drawable/cloud_sync" />
 

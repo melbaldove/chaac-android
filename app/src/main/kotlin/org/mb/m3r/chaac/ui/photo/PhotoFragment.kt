@@ -13,6 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.OnClick
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
@@ -104,7 +107,30 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            presenter.savePhotoFromTemp(imageTempPath!!)
+            showImageDescriptionDialog()
+        }
+    }
+
+    fun showImageDescriptionDialog() {
+        MaterialDialog.Builder(context)
+                .title("Describe your image :)")
+                .positiveText("Done")
+                .negativeText("Cancel")
+                .negativeColorRes(R.color.material_color_grey_primary)
+                .customView(R.layout.new_photo, true)
+                .onAny(this::onDialogButtonClick)
+                .show()
+    }
+
+    private fun onDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
+        when (which) {
+            DialogAction.POSITIVE ->
+                presenter.savePhotoFromTemp(imageTempPath!!,
+                        dialog.caption_edit.text.toString(), dialog.remarks_edit.text.toString())
+            // user didnt input image details
+            else ->
+                presenter.savePhotoFromTemp(imageTempPath!!, null, null)
+
         }
     }
 }

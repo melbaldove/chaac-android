@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.photo_item.view.*
 import org.mb.m3r.chaac.GlideApp
@@ -32,6 +33,8 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
 
     class PhotoHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private val imageView: ImageView = view.photoView
+        private val caption: TextView = view.imageCaption
+        private val remarks: TextView = view.imageRemarks
 
         fun bind(photo: Photo) {
             GlideApp.with(view.context)
@@ -39,8 +42,9 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView)
+            caption.text = if (photo.caption.isNullOrEmpty()) "No Caption" else photo.caption
+            remarks.text = if (photo.remarks.isNullOrEmpty()) "This is a cool photo. Rock on MB!" else photo.remarks
         }
-
     }
 
     fun addPhoto(photo: Photo) {
