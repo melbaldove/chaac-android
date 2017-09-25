@@ -9,16 +9,22 @@ import org.mb.m3r.chaac.ui.base.BaseView
  */
 interface PhotoContract {
     interface View : BaseView {
-        fun addPhotos(photos: List<Photo>)
+        fun showPhotos(photos: List<Photo>)
 
-        fun addPhoto(photo: Photo)
+        fun addToPhotos(photo: Photo)
+
+        fun showTakePhoto()
+
+        fun showAddEditPhotoDetail()
     }
 
     interface Presenter : BasePresenter {
-        fun photoTaken()
+        fun takePhoto()
 
-        fun savePhotoFromTemp(path: String, caption: String?, remarks: String?)
+        fun savePhoto(path: String, caption: String?, remarks: String?)
 
         fun loadPhotos()
+
+        fun photoTaken()
     }
 }

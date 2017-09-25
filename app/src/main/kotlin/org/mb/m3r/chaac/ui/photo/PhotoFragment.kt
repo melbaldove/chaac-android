@@ -61,22 +61,22 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             super.onCreateView(inflater, container, savedInstanceState)
 
-    override fun addPhotos(photos: List<Photo>) {
+    override fun showPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
         photo_recycler_view.adapter = photoAdapter
     }
 
-    override fun addPhoto(photo: Photo) {
+    override fun addToPhotos(photo: Photo) {
         photoAdapter.addPhoto(photo)
         photo_recycler_view.smoothScrollToPosition(photoAdapter.size - 1)
     }
 
     @OnClick(R.id.btnCamera)
     fun cameraOnClick() {
-        takePicture()
+        presenter.takePhoto()
     }
 
-    private fun takePicture() {
+    override fun showTakePhoto() {
         if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
             return
@@ -100,18 +100,18 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL,
-            ActivityUtil.PERMISSION_REQUEST_CAMERA -> takePicture()
+            ActivityUtil.PERMISSION_REQUEST_CAMERA -> presenter.takePhoto()
         }
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            showImageDescriptionDialog()
+            presenter.photoTaken()
         }
     }
 
-    fun showImageDescriptionDialog() {
+    override fun showAddEditPhotoDetail() {
         MaterialDialog.Builder(context)
                 .title("Describe your image :)")
                 .positiveText("Done")
@@ -125,11 +125,11 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     private fun onDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
         when (which) {
             DialogAction.POSITIVE ->
-                presenter.savePhotoFromTemp(imageTempPath!!,
+                presenter.savePhoto(imageTempPath!!,
                         dialog.caption_edit.text.toString(), dialog.remarks_edit.text.toString())
-            // user didnt input image details
+        // when user didn't input image details
             else ->
-                presenter.savePhotoFromTemp(imageTempPath!!, null, null)
+                presenter.savePhoto(imageTempPath!!, null, null)
 
         }
     }
