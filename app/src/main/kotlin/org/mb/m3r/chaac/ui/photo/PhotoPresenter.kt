@@ -25,22 +25,19 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
         subscriptions.dispose()
     }
 
-    override fun photoTaken() {
-        TODO("implement this")
-    }
-
     /**
      * @param {String} path - path where temporary image was stored
      */
-    override fun savePhotoFromTemp(path: String) {
+    override fun savePhoto(path: String, caption: String?, remarks: String?) {
         val photoFile = ChaacUtil.storeImage(path)
         ChaacUtil.checkSum(photoFile)
                 .compose(SchedulerUtil.ioToUi())
                 .subscribe({ checksum ->
                     // TODO: implement caption handling
-                    Photo(checksum = checksum, path = photoFile.path, caption = null, createdDate = System.currentTimeMillis()).let {
+                    Photo(checksum = checksum, path = photoFile.path, caption = caption,
+                            remarks = remarks, createdDate = System.currentTimeMillis()).let {
                         repo.savePhoto(it)
-                        view.addPhoto(it)
+                        view.addToPhotos(it)
                     }
                 }) { throwable ->
                     // TODO: Handle errors
@@ -52,7 +49,15 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
                 .compose(SchedulerUtil.ioToUi())
                 .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
                 .subscribe({ photoList ->
-                    view.addPhotos(photoList)
+                    view.showPhotos(photoList)
                 }).let { subscriptions.add(it) }
+    }
+
+    override fun takePhoto() {
+        view.showTakePhoto()
+    }
+
+    override fun photoTaken() {
+        view.showAddEditPhotoDetail()
     }
 }

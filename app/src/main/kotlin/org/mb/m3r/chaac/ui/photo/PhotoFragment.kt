@@ -13,6 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.OnClick
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
@@ -58,22 +61,22 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             super.onCreateView(inflater, container, savedInstanceState)
 
-    override fun addPhotos(photos: List<Photo>) {
+    override fun showPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
         photo_recycler_view.adapter = photoAdapter
     }
 
-    override fun addPhoto(photo: Photo) {
+    override fun addToPhotos(photo: Photo) {
         photoAdapter.addPhoto(photo)
         photo_recycler_view.smoothScrollToPosition(photoAdapter.size - 1)
     }
 
     @OnClick(R.id.btnCamera)
     fun cameraOnClick() {
-        takePicture()
+        presenter.takePhoto()
     }
 
-    private fun takePicture() {
+    override fun showTakePhoto() {
         if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
             return
@@ -97,14 +100,37 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL,
-            ActivityUtil.PERMISSION_REQUEST_CAMERA -> takePicture()
+            ActivityUtil.PERMISSION_REQUEST_CAMERA -> presenter.takePhoto()
         }
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            presenter.savePhotoFromTemp(imageTempPath!!)
+            presenter.photoTaken()
+        }
+    }
+
+    override fun showAddEditPhotoDetail() {
+        MaterialDialog.Builder(context)
+                .title("Describe your image :)")
+                .positiveText("Done")
+                .negativeText("Cancel")
+                .negativeColorRes(R.color.material_color_grey_primary)
+                .customView(R.layout.new_photo, true)
+                .onAny(this::onDialogButtonClick)
+                .show()
+    }
+
+    private fun onDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
+        when (which) {
+            DialogAction.POSITIVE ->
+                presenter.savePhoto(imageTempPath!!,
+                        dialog.caption_edit.text.toString(), dialog.remarks_edit.text.toString())
+        // when user didn't input image details
+            else ->
+                presenter.savePhoto(imageTempPath!!, null, null)
+
         }
     }
 }

@@ -14,7 +14,9 @@ data class Photo(
 
         val path: String,
 
-        val caption: String?,
+        var caption: String?,
+
+        val remarks: String?,
 
         val createdDate: Long
 ) : Persistable
