@@ -9,9 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import butterknife.OnClick
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
@@ -41,8 +38,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     private var imageTempPath: String? = null
 
-    val REQUEST_IMAGE_CAPTURE = 20
-    val REQUEST_SAVE_IMAGE = 21
+    private val REQUEST_IMAGE_CAPTURE = 20
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +53,6 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
                 LinearLayoutManager.VERTICAL, true).apply { stackFromEnd = true }
         presenter.subscribe()
     }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            super.onCreateView(inflater, container, savedInstanceState)
 
     override fun showPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
@@ -78,11 +71,13 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
 
     override fun showTakePhoto() {
         if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
             return
         }
         if (!ActivityUtil.hasPermission(context, CAMERA)) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA), ActivityUtil.PERMISSION_REQUEST_CAMERA)
+            requestPermissions(arrayOf(Manifest.permission.CAMERA),
+                    ActivityUtil.PERMISSION_REQUEST_CAMERA)
             return
         }
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
@@ -96,7 +91,8 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL,

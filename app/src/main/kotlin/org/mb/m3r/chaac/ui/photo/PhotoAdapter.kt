@@ -43,7 +43,9 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView)
             caption.text = if (photo.caption.isNullOrEmpty()) "No Caption" else photo.caption
-            remarks.text = if (photo.remarks.isNullOrEmpty()) "This is a cool photo. Rock on MB!" else photo.remarks
+            remarks.text =
+                    if (photo.remarks.isNullOrEmpty()) "This is a cool photo. Rock on MB!"
+                    else photo.remarks
         }
     }
 
