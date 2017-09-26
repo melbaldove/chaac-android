@@ -114,6 +114,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
                 .negativeText("Cancel")
                 .negativeColorRes(R.color.material_color_grey_primary)
                 .customView(R.layout.new_photo, true)
+                .cancelable(false)
                 .onAny(this::onDialogButtonClick)
                 .show()
     }
