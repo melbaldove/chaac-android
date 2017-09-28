@@ -25,7 +25,7 @@ class PhotoRepositoryImplTest {
 
     @Test
     fun savePhoto() {
-        val mockPhoto = Photo(checksum = "someRandomString", path = "somePath", caption = null, createdDate = System.currentTimeMillis())
+        val mockPhoto = Photo(checksum = "someRandomString", path = "somePath", caption = null, remarks = null, createdDate = System.currentTimeMillis())
         val mockDb = mutableListOf<Photo>()
         `when`(localDataSource.savePhoto(mockPhoto)).then { invocation: InvocationOnMock? ->
             mockDb.add(invocation!!.arguments.first() as Photo)
