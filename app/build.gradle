@@ -87,6 +87,10 @@ dependencies {
     compile "com.github.bumptech.glide:glide:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
+    // Leak Canary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
     // Misc
     compile 'commons-io:commons-io:2.4'
     compile 'commons-codec:commons-codec:1.10'
