@@ -1,7 +1,6 @@
 package org.mb.m3r.chaac.ui.photo
 
 import android.Manifest
-import android.Manifest.permission.CAMERA
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
 import android.net.Uri
@@ -73,11 +72,6 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
-            return
-        }
-        if (!ActivityUtil.hasPermission(context, CAMERA)) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA),
-                    ActivityUtil.PERMISSION_REQUEST_CAMERA)
             return
         }
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
