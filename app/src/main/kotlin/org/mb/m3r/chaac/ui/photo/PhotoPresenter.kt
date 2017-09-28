@@ -33,7 +33,6 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
         ChaacUtil.checkSum(photoFile)
                 .compose(SchedulerUtil.ioToUi())
                 .subscribe({ checksum ->
-                    // TODO: implement caption handling
                     Photo(checksum = checksum, path = photoFile.path, caption = caption,
                             remarks = remarks, createdDate = System.currentTimeMillis()).let {
                         repo.savePhoto(it)
