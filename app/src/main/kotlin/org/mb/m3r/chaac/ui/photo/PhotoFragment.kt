@@ -53,6 +53,11 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
         presenter.subscribe()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.unsubscribe()
+    }
+
     override fun showPhotos(photos: List<Photo>) {
         photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
         photo_recycler_view.adapter = photoAdapter
