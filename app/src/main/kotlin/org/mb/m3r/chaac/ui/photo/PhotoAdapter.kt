@@ -28,10 +28,7 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
     }
 
     override fun onBindViewHolder(holder: PhotoHolder?, position: Int) {
-        photos.get(index = position).let {
-            viewBinderHelper.bind(holder?.swipeRevealLayout, it.checksum)
-            holder?.bind(it)
-        }
+            holder?.bind(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): PhotoAdapter.PhotoHolder {
@@ -40,13 +37,17 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
         return PhotoHolder(view)
     }
 
-    class PhotoHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val swipeRevealLayout = view.swipeRevealDelete!!
+    inner class PhotoHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        private val swipeRevealLayout = view.swipeRevealDelete!!
         private val imageView: ImageView = view.photoView
         private val caption: TextView = view.imageCaption
         private val remarks: TextView = view.imageRemarks
 
-        fun bind(photo: Photo) {
+        fun bind(position: Int) {
+            val photo = photos[position]
+            viewBinderHelper.bind(swipeRevealLayout, photo.checksum)
+
+
             GlideApp.with(view.context)
                     .load(photo.path)
                     .centerCrop()
@@ -61,7 +62,8 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
 
     fun addPhoto(photo: Photo) {
         photos.add(photo)
-        this.notifyItemInserted(photos.size)
+        notifyItemInserted(photos.size)
+    }
     }
 
     val size: Int
