@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.chauthai.swipereveallayout.ViewBinderHelper
 import kotlinx.android.synthetic.main.photo_item.view.*
 import org.mb.m3r.chaac.GlideApp
 import org.mb.m3r.chaac.R
@@ -17,10 +18,18 @@ import org.mb.m3r.chaac.data.Photo
  * melqbaldove@gmail.com
  */
 class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>() {
+
+    private val viewBinderHelper = ViewBinderHelper()
+
     override fun getItemCount(): Int = photos.size
+
+    init {
+        viewBinderHelper.setOpenOnlyOne(true)
+    }
 
     override fun onBindViewHolder(holder: PhotoHolder?, position: Int) {
         photos.get(index = position).let {
+            viewBinderHelper.bind(holder?.swipeRevealLayout, it.checksum)
             holder?.bind(it)
         }
     }
@@ -32,6 +41,7 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
     }
 
     class PhotoHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val swipeRevealLayout = view.swipeRevealDelete!!
         private val imageView: ImageView = view.photoView
         private val caption: TextView = view.imageCaption
         private val remarks: TextView = view.imageRemarks
