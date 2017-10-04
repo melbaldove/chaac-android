@@ -8,13 +8,13 @@ import org.junit.Assert.*
  * @author Melby Baldove
  * melqbaldove@gmail.com
  */
-class ChaacUtilTest {
+class FileUtilTest {
     private val TEST_FILE = "TestFile"
     @Test
     fun checkSum() {
         val expectedChecksum = "fa80ddf05dc43491d57573cc1b2ee010"
         val testFile = getFileFromResources()
-        val actualChecksum = ChaacUtil.checkSum(testFile).blockingGet()
+        val actualChecksum = FileUtil.checkSum(testFile).blockingGet()
 
         assertEquals(expectedChecksum, actualChecksum)
     }

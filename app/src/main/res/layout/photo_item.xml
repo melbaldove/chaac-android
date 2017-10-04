@@ -1,77 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="144dp"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/material_card_gutter"
+    android:layout_marginEnd="@dimen/material_card_edge_margin"
+    android:layout_marginLeft="@dimen/material_card_edge_margin"
+    android:layout_marginRight="@dimen/material_card_edge_margin"
+    android:layout_marginStart="@dimen/material_card_edge_margin"
+    card_view:cardCornerRadius="@dimen/material_card_corner_radius"
+    card_view:cardElevation="@dimen/material_card_elevation_resting">
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
+    <com.chauthai.swipereveallayout.SwipeRevealLayout
+        android:id="@+id/swipeRevealDelete"
         android:layout_width="match_parent"
-        android:layout_height="144dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/material_card_gutter"
-        android:layout_marginEnd="@dimen/material_card_edge_margin"
-        android:layout_marginLeft="@dimen/material_card_edge_margin"
-        android:layout_marginRight="@dimen/material_card_edge_margin"
-        android:layout_marginStart="@dimen/material_card_edge_margin"
-        card_view:cardCornerRadius="@dimen/material_card_corner_radius"
-        card_view:cardElevation="@dimen/material_card_elevation_resting">
+        android:layout_height="match_parent"
+        app:dragEdge="right"
+        app:mode="same_level">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/photoView"
-                android:layout_width="144dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:contentDescription="@string/photoView_desc" />
+                android:orientation="vertical">
 
+                <ImageView
+                    android:id="@+id/edit_item"
+                    android:layout_width="48dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:background="@color/cardview_dark_background"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_mode_edit_white_24dp" />
 
-            <TextView
-                android:id="@+id/imageCaption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="@dimen/material_baseline_grid_0.5x"
-                android:layout_marginEnd="@dimen/material_baseline_grid_1x"
-                android:layout_marginLeft="@dimen/material_baseline_grid_1x"
-                android:layout_marginRight="@dimen/material_baseline_grid_1x"
-                android:layout_marginStart="@dimen/material_baseline_grid_1x"
-                android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:layout_toEndOf="@id/photoView"
-                android:layout_toRightOf="@id/photoView"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/material_subheader_text_size" />
+                <ImageView
+                    android:id="@+id/delete_item"
+                    android:layout_width="48dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/material_color_red_700"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_delete_white_24dp" />
+            </LinearLayout>
 
+        </FrameLayout>
 
-            <TextView
-                android:id="@+id/imageRemarks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/imageCaption"
-                android:layout_marginBottom="@dimen/material_baseline_grid_1x"
-                android:layout_marginEnd="@dimen/material_baseline_grid_1x"
-                android:layout_marginLeft="@dimen/material_baseline_grid_1x"
-                android:layout_marginRight="@dimen/material_baseline_grid_1x"
-                android:layout_marginStart="@dimen/material_baseline_grid_1x"
-                android:layout_marginTop="@dimen/material_baseline_grid_0.5x"
-                android:layout_toEndOf="@id/photoView"
-                android:layout_toRightOf="@id/photoView"
-                android:lines="6" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_margin="8dp"
-                android:src="@drawable/cloud_sync" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/photoView"
+                    android:layout_width="144dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:contentDescription="@string/photoView_desc" />
 
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-</LinearLayout>
+                <TextView
+                    android:id="@+id/imageCaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="@dimen/material_baseline_grid_0.5x"
+                    android:layout_marginEnd="@dimen/material_baseline_grid_1x"
+                    android:layout_marginLeft="@dimen/material_baseline_grid_1x"
+                    android:layout_marginRight="@dimen/material_baseline_grid_1x"
+                    android:layout_marginStart="@dimen/material_baseline_grid_1x"
+                    android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                    android:layout_toEndOf="@id/photoView"
+                    android:layout_toRightOf="@id/photoView"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/material_subheader_text_size" />
+
+                <TextView
+                    android:id="@+id/imageRemarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/imageCaption"
+                    android:layout_marginBottom="@dimen/material_baseline_grid_1x"
+                    android:layout_marginEnd="@dimen/material_baseline_grid_1x"
+                    android:layout_marginLeft="@dimen/material_baseline_grid_1x"
+                    android:layout_marginRight="@dimen/material_baseline_grid_1x"
+                    android:layout_marginStart="@dimen/material_baseline_grid_1x"
+                    android:layout_marginTop="@dimen/material_baseline_grid_0.5x"
+                    android:layout_toEndOf="@id/photoView"
+                    android:layout_toRightOf="@id/photoView"
+                    android:lines="6" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/cloud_sync" />
+            </RelativeLayout>
+        </FrameLayout>
+    </com.chauthai.swipereveallayout.SwipeRevealLayout>
+</android.support.v7.widget.CardView>

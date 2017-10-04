@@ -18,15 +18,16 @@ import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
+import org.mb.m3r.chaac.ui.photo.PhotoContract.View.Companion.ADD_PHOTO
 import org.mb.m3r.chaac.util.ActivityUtil
-import org.mb.m3r.chaac.util.ChaacUtil
+import org.mb.m3r.chaac.util.FileUtil
 import javax.inject.Inject
 
 
 /**
  * @author Melby Baldove
  */
-class PhotoFragment : BaseFragment(), PhotoContract.View {
+class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback {
 
     override val layoutRes: Int = R.layout.photo_frag
 
@@ -59,7 +60,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     }
 
     override fun showPhotos(photos: List<Photo>) {
-        photoAdapter = PhotoAdapter(photos as ArrayList<Photo>)
+        photoAdapter = PhotoAdapter(photos as ArrayList<Photo>, this)
         photo_recycler_view.adapter = photoAdapter
     }
 
@@ -80,7 +81,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
             return
         }
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            ChaacUtil.createTempImageFile().let {
+            FileUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
                 putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(it))
             }
@@ -101,12 +102,15 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            presenter.photoTaken()
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            when (resultCode) {
+                AppCompatActivity.RESULT_OK -> presenter.photoTaken()
+                else -> imageTempPath?.let { FileUtil.deleteFile(it) }
+            }
         }
     }
 
-    override fun showAddEditPhotoDetail() {
+    override fun showAddEditPhotoDetail(action: Int, caption: String?, remarks: String?) {
         MaterialDialog.Builder(context)
                 .title("Describe your image :)")
                 .positiveText("Done")
@@ -114,11 +118,34 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
                 .negativeColorRes(R.color.material_color_grey_primary)
                 .customView(R.layout.new_photo, true)
                 .cancelable(false)
-                .onAny(this::onDialogButtonClick)
+                .apply {
+                    when (action) {
+                        ADD_PHOTO -> onAny(this@PhotoFragment::onAddDialogButtonClick)
+                    }
+
+                }.show().apply {
+            caption_edit.text = SpannableStringBuilder(caption)
+            remarks_edit.text = SpannableStringBuilder(remarks)
+        }
+
+    }
+
+    override fun showConfirmDeletePhoto(photo: Photo) {
+        MaterialDialog.Builder(context)
+                .title("Are you sure you want to delete this?")
+                .positiveText("Delete")
+                .negativeText("Cancel")
+                .negativeColorRes(R.color.material_color_grey_primary)
+                .positiveColorRes(R.color.material_color_red_700)
+                .onPositive({ _, _ -> presenter.deletePhoto(photo) })
                 .show()
     }
 
-    private fun onDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
+    override fun removeFromPhotos(photo: Photo) {
+        photoAdapter.removePhoto(photo)
+    }
+
+    private fun onAddDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
         when (which) {
             DialogAction.POSITIVE ->
                 presenter.savePhoto(imageTempPath!!,
@@ -128,5 +155,10 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
                 presenter.savePhoto(imageTempPath!!, null, null)
 
         }
+    }
+
+    override fun onDeletePhoto(position: Int) {
+        val photo = photoAdapter.getPhoto(position)
+        presenter.onDeletePhoto(photo)
     }
 }

@@ -14,4 +14,8 @@ class LocalPhotoDataSource(private val db: Database) : PhotoRepository {
     }
 
     override fun getPhotos(): Flowable<Photo> = db.store().select(Photo::class).get().flowable()
+
+    override fun deletePhoto(photo: Photo) {
+        db.store().delete(photo).subscribe()
+    }
 }

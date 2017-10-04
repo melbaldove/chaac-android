@@ -1,9 +1,10 @@
 package org.mb.m3r.chaac.ui.photo
 
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
-import org.mb.m3r.chaac.util.ChaacUtil
+import org.mb.m3r.chaac.util.FileUtil
 import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 import javax.inject.Inject
 
@@ -29,18 +30,21 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
      * @param {String} path - path where temporary image was stored
      */
     override fun savePhoto(path: String, caption: String?, remarks: String?) {
-        val photoFile = ChaacUtil.storeImage(path)
-        ChaacUtil.checkSum(photoFile)
-                .compose(SchedulerUtil.ioToUi())
-                .subscribe({ checksum ->
-                    Photo(checksum = checksum, path = photoFile.path, caption = caption,
-                            remarks = remarks, createdDate = System.currentTimeMillis()).let {
-                        repo.savePhoto(it)
-                        view.addToPhotos(it)
-                    }
-                }) { throwable ->
-                    // TODO: Handle errors
-                }.let { subscriptions.add(it) }
+        FileUtil.storeImage(path)
+                .subscribeOn(Schedulers.io())
+                .subscribe({ photoFile ->
+                    FileUtil.checkSum(photoFile)
+                            .compose(SchedulerUtil.ioToUi())
+                            .subscribe({ checksum ->
+                                Photo(checksum = checksum, path = photoFile.path, caption = caption,
+                                        remarks = remarks, createdDate = System.currentTimeMillis()).let {
+                                    repo.savePhoto(it)
+                                    view.addToPhotos(it)
+                                }
+                            }, { throwable ->
+                                // TODO: Handle errors
+                            }).let { subscriptions.add(it) }
+                }).let { subscriptions.add(it) }
     }
 
     override fun loadPhotos() {
@@ -49,6 +53,8 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
                 .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
                 .subscribe({ photoList ->
                     view.showPhotos(photoList)
+                }, { throwable ->
+                    // TODO: Handle errors
                 }).let { subscriptions.add(it) }
     }
 
@@ -57,6 +63,18 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
     }
 
     override fun photoTaken() {
-        view.showAddEditPhotoDetail()
+        view.showAddEditPhotoDetail(PhotoContract.View.ADD_PHOTO, "", "")
+    }
+
+    override fun onDeletePhoto(photo: Photo) {
+        view.showConfirmDeletePhoto(photo)
+    }
+
+    override fun deletePhoto(photo: Photo) {
+        photo.let {
+            view.removeFromPhotos(it)
+            FileUtil.deleteFile(it.path)
+            repo.deletePhoto(it)
+        }
     }
 }

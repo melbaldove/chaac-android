@@ -10,4 +10,6 @@ interface PhotoRepository {
     fun savePhoto(photo: Photo)
 
     fun getPhotos(): Flowable<Photo>
+
+    fun deletePhoto(photo: Photo)
 }

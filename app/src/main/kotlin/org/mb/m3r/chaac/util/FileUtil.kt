@@ -17,7 +17,7 @@ import java.util.*
 /**
  * @author Melby Baldove
  */
-object ChaacUtil {
+object FileUtil {
 
     val DIRECTORY_NAME = "Chaac"
 
@@ -39,7 +39,6 @@ object ChaacUtil {
                 ".jpg", /* suffix */
                 storageDir      /* directory */
         )
-
         return image
     }
 
@@ -53,13 +52,13 @@ object ChaacUtil {
     /*
      * Stores image from temp directory to picture directory
      */
-    fun storeImage(path: String): File {
+    fun storeImage(path: String): Single<File> = Single.create<File> { subscriber ->
         val tempSource = File(path)
         // Create an image file name
         val dest = createImageFile()
         moveFile(tempSource, dest)
 
-        return dest
+        subscriber.onSuccess(dest)
     }
 
     fun moveFile(source: File, dest: File) {
@@ -85,6 +84,14 @@ object ChaacUtil {
             subscriber.onError(e)
         } finally {
             IOUtils.closeQuietly(fileInputStream)
+        }
+    }
+
+    fun deleteFile(path: String) {
+        try {
+            File(path).delete()
+        } catch (e: IOException) {
+            Log.e("Error", e.message)
         }
     }
 
