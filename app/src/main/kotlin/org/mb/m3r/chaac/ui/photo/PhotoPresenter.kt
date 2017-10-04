@@ -4,7 +4,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
-import org.mb.m3r.chaac.util.ChaacUtil
+import org.mb.m3r.chaac.util.FileUtil
 import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 import javax.inject.Inject
 
@@ -30,10 +30,10 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
      * @param {String} path - path where temporary image was stored
      */
     override fun savePhoto(path: String, caption: String?, remarks: String?) {
-        ChaacUtil.storeImage(path)
+        FileUtil.storeImage(path)
                 .subscribeOn(Schedulers.io())
                 .subscribe({ photoFile ->
-                    ChaacUtil.checkSum(photoFile)
+                    FileUtil.checkSum(photoFile)
                             .compose(SchedulerUtil.ioToUi())
                             .subscribe({ checksum ->
                                 Photo(checksum = checksum, path = photoFile.path, caption = caption,

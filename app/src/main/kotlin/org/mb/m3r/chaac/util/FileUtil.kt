@@ -17,7 +17,7 @@ import java.util.*
 /**
  * @author Melby Baldove
  */
-object ChaacUtil {
+object FileUtil {
 
     val DIRECTORY_NAME = "Chaac"
 
@@ -85,6 +85,14 @@ object ChaacUtil {
             subscriber.onError(e)
         } finally {
             IOUtils.closeQuietly(fileInputStream)
+        }
+    }
+
+    fun deleteFile(path: String) {
+        try {
+            File(path).delete()
+        } catch (e: IOException) {
+            Log.e("Error", e.message)
         }
     }
 

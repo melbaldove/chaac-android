@@ -19,7 +19,7 @@ import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
-import org.mb.m3r.chaac.util.ChaacUtil
+import org.mb.m3r.chaac.util.FileUtil
 import javax.inject.Inject
 
 
@@ -80,7 +80,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
             return
         }
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            ChaacUtil.createTempImageFile().let {
+            FileUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
                 putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(it))
             }
