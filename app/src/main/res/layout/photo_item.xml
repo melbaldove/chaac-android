@@ -31,6 +31,7 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/edit_item"
                     android:layout_width="48dp"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -40,6 +41,7 @@
                     android:src="@drawable/ic_mode_edit_white_24dp" />
 
                 <ImageView
+                    android:id="@+id/delete_item"
                     android:layout_width="48dp"
                     android:layout_height="0dp"
                     android:layout_gravity="center"

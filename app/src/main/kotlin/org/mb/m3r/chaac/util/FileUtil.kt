@@ -39,7 +39,6 @@ object FileUtil {
                 ".jpg", /* suffix */
                 storageDir      /* directory */
         )
-
         return image
     }
 

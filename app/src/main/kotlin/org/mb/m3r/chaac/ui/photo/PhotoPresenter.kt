@@ -53,6 +53,8 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
                 .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
                 .subscribe({ photoList ->
                     view.showPhotos(photoList)
+                }, { throwable ->
+                    // TODO: Handle errors
                 }).let { subscriptions.add(it) }
     }
 
@@ -61,6 +63,18 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
     }
 
     override fun photoTaken() {
-        view.showAddEditPhotoDetail()
+        view.showAddEditPhotoDetail(PhotoContract.View.ADD_PHOTO, "", "")
+    }
+
+    override fun onDeletePhoto(photo: Photo) {
+        view.showConfirmDeletePhoto(photo)
+    }
+
+    override fun deletePhoto(photo: Photo) {
+        photo.let {
+            view.removeFromPhotos(it)
+            FileUtil.deleteFile(it.path)
+            repo.deletePhoto(it)
+        }
     }
 }

@@ -17,7 +17,11 @@ import org.mb.m3r.chaac.data.Photo
  * @author Melby Baldove
  * melqbaldove@gmail.com
  */
-class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>() {
+class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>() {
+
+    interface Callback {
+        fun onDeletePhoto(position: Int)
+    }
 
     private val viewBinderHelper = ViewBinderHelper()
 
@@ -28,7 +32,7 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
     }
 
     override fun onBindViewHolder(holder: PhotoHolder?, position: Int) {
-            holder?.bind(position)
+        holder?.bind(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): PhotoAdapter.PhotoHolder {
@@ -42,11 +46,15 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
         private val imageView: ImageView = view.photoView
         private val caption: TextView = view.imageCaption
         private val remarks: TextView = view.imageRemarks
+        private val deleteButton = view.delete_item
 
         fun bind(position: Int) {
             val photo = photos[position]
             viewBinderHelper.bind(swipeRevealLayout, photo.checksum)
 
+            deleteButton.setOnClickListener { _ ->
+                listener.onDeletePhoto(this.adapterPosition)
+            }
 
             GlideApp.with(view.context)
                     .load(photo.path)
@@ -64,7 +72,15 @@ class PhotoAdapter(val photos: ArrayList<Photo>) : RecyclerView.Adapter<PhotoAda
         photos.add(photo)
         notifyItemInserted(photos.size)
     }
+
+    fun removePhoto(photo: Photo): Photo {
+        val position = photos.indexOf(photo)
+        photos.removeAt(position)
+        notifyItemRemoved(position)
+        return photo
     }
+
+    fun getPhoto(position: Int): Photo = photos.elementAt(position)
 
     val size: Int
         get() = photos.size
