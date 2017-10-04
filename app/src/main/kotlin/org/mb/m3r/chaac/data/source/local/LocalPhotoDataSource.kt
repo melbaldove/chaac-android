@@ -10,7 +10,7 @@ import org.mb.m3r.chaac.data.source.PhotoRepository
  */
 class LocalPhotoDataSource(private val db: Database) : PhotoRepository {
     override fun savePhoto(photo: Photo) {
-        db.store().insert(photo).subscribe()
+        db.store().upsert(photo).subscribe()
     }
 
     override fun getPhotos(): Flowable<Photo> = db.store().select(Photo::class).get().flowable()
@@ -18,4 +18,5 @@ class LocalPhotoDataSource(private val db: Database) : PhotoRepository {
     override fun deletePhoto(photo: Photo) {
         db.store().delete(photo).subscribe()
     }
+
 }

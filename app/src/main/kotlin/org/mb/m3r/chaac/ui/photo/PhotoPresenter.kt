@@ -29,17 +29,18 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
     /**
      * @param {String} path - path where temporary image was stored
      */
-    override fun savePhoto(path: String, caption: String?, remarks: String?) {
+    override fun savePhoto(path: String) {
         FileUtil.storeImage(path)
                 .subscribeOn(Schedulers.io())
                 .subscribe({ photoFile ->
                     FileUtil.checkSum(photoFile)
                             .compose(SchedulerUtil.ioToUi())
                             .subscribe({ checksum ->
-                                Photo(checksum = checksum, path = photoFile.path, caption = caption,
-                                        remarks = remarks, createdDate = System.currentTimeMillis()).let {
+                                Photo(checksum = checksum, path = photoFile.path, caption = "",
+                                        remarks = "", createdDate = System.currentTimeMillis()).let {
                                     repo.savePhoto(it)
                                     view.addToPhotos(it)
+                                    view.showEditPhotoDetail(it)
                                 }
                             }, { throwable ->
                                 // TODO: Handle errors
@@ -62,10 +63,6 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
         view.showTakePhoto()
     }
 
-    override fun photoTaken() {
-        view.showAddEditPhotoDetail(PhotoContract.View.ADD_PHOTO, "", "")
-    }
-
     override fun onDeletePhoto(photo: Photo) {
         view.showConfirmDeletePhoto(photo)
     }
@@ -75,6 +72,19 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
             view.removeFromPhotos(it)
             FileUtil.deleteFile(it.path)
             repo.deletePhoto(it)
+        }
+    }
+
+    override fun onEditPhoto(photo: Photo) {
+        view.showEditPhotoDetail(photo)
+    }
+
+    override fun editPhoto(photo: Photo, caption: String, remarks: String) {
+        photo.let {
+            it.caption = caption
+            it.remarks = remarks
+            repo.savePhoto(it)
+            view.updatePhoto(it)
         }
     }
 }

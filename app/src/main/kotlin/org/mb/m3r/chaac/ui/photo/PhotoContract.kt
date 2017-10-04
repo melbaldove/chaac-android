@@ -16,29 +16,30 @@ interface PhotoContract {
 
         fun removeFromPhotos(photo: Photo)
 
+        fun updatePhoto(photo: Photo)
+
         fun showTakePhoto()
 
         fun showConfirmDeletePhoto(photo: Photo)
 
-        fun showAddEditPhotoDetail(action: Int, caption: String?, remarks: String?)
+        fun showEditPhotoDetail(photo: Photo)
 
-        companion object {
-            val EDIT_PHOTO = 1
-            val ADD_PHOTO = 0
-        }
     }
 
     interface Presenter : BasePresenter {
         fun takePhoto()
 
-        fun savePhoto(path: String, caption: String?, remarks: String?)
+        fun savePhoto(path: String)
 
         fun onDeletePhoto(photo: Photo)
 
         fun deletePhoto(photo: Photo)
 
+        fun onEditPhoto(photo: Photo)
+
+        fun editPhoto(photo: Photo, caption: String, remarks: String)
+
         fun loadPhotos()
 
-        fun photoTaken()
     }
 }
