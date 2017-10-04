@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.SpannableStringBuilder
 import butterknife.OnClick
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
@@ -18,7 +18,6 @@ import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
-import org.mb.m3r.chaac.ui.photo.PhotoContract.View.Companion.ADD_PHOTO
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
 import javax.inject.Inject
@@ -39,10 +38,6 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
     private var imageTempPath: String? = null
 
     private val REQUEST_IMAGE_CAPTURE = 20
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -104,28 +99,26 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             when (resultCode) {
-                AppCompatActivity.RESULT_OK -> presenter.photoTaken()
+                AppCompatActivity.RESULT_OK -> presenter.savePhoto(imageTempPath!!)
                 else -> imageTempPath?.let { FileUtil.deleteFile(it) }
             }
         }
     }
 
-    override fun showAddEditPhotoDetail(action: Int, caption: String?, remarks: String?) {
+    override fun showEditPhotoDetail(photo: Photo) {
         MaterialDialog.Builder(context)
                 .title("Describe your image :)")
                 .positiveText("Done")
                 .negativeText("Cancel")
                 .negativeColorRes(R.color.material_color_grey_primary)
                 .customView(R.layout.new_photo, true)
-                .cancelable(false)
-                .apply {
-                    when (action) {
-                        ADD_PHOTO -> onAny(this@PhotoFragment::onAddDialogButtonClick)
-                    }
+                .onPositive({ dialog, _ ->
+                    presenter.editPhoto(photo, dialog.caption_edit.text.toString(),
+                            dialog.remarks_edit.text.toString())
 
-                }.show().apply {
-            caption_edit.text = SpannableStringBuilder(caption)
-            remarks_edit.text = SpannableStringBuilder(remarks)
+                }).show().apply {
+            caption_edit.text = SpannableStringBuilder(photo.caption)
+            remarks_edit.text = SpannableStringBuilder(photo.remarks)
         }
 
     }
@@ -145,20 +138,18 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
         photoAdapter.removePhoto(photo)
     }
 
-    private fun onAddDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
-        when (which) {
-            DialogAction.POSITIVE ->
-                presenter.savePhoto(imageTempPath!!,
-                        dialog.caption_edit.text.toString(), dialog.remarks_edit.text.toString())
-        // when user didn't input image details
-            else ->
-                presenter.savePhoto(imageTempPath!!, null, null)
-
-        }
-    }
-
     override fun onDeletePhoto(position: Int) {
         val photo = photoAdapter.getPhoto(position)
         presenter.onDeletePhoto(photo)
+    }
+
+    override fun updatePhoto(photo: Photo) {
+        photoAdapter.updatePhoto(photo)
+    }
+
+    override fun onEditPhoto(position: Int) {
+        photoAdapter.getPhoto(position).let {
+            presenter.onEditPhoto(it)
+        }
     }
 }

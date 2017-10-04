@@ -21,6 +21,8 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
 
     interface Callback {
         fun onDeletePhoto(position: Int)
+
+        fun onEditPhoto(position: Int)
     }
 
     private val viewBinderHelper = ViewBinderHelper()
@@ -47,11 +49,15 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
         private val caption: TextView = view.imageCaption
         private val remarks: TextView = view.imageRemarks
         private val deleteButton = view.delete_item
+        private val editButton = view.edit_item
 
         fun bind(position: Int) {
             val photo = photos[position]
             viewBinderHelper.bind(swipeRevealLayout, photo.checksum)
 
+            editButton.setOnClickListener { _ ->
+                listener.onEditPhoto(this.adapterPosition)
+            }
             deleteButton.setOnClickListener { _ ->
                 listener.onDeletePhoto(this.adapterPosition)
             }
@@ -61,16 +67,17 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView)
-            caption.text = if (photo.caption.isNullOrEmpty()) "No Caption" else photo.caption
+            caption.text = if (photo.caption.isEmpty()) "No Caption" else photo.caption
             remarks.text =
-                    if (photo.remarks.isNullOrEmpty()) "This is a cool photo. Rock on MB!"
+                    if (photo.remarks.isEmpty()) "This is a cool photo. Rock on MB!"
                     else photo.remarks
         }
     }
 
-    fun addPhoto(photo: Photo) {
+    fun addPhoto(photo: Photo): Photo {
         photos.add(photo)
-        notifyItemInserted(photos.size)
+        notifyItemInserted(photos.size - 1)
+        return photo
     }
 
     fun removePhoto(photo: Photo): Photo {
@@ -80,9 +87,14 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
         return photo
     }
 
+    fun updatePhoto(newPhoto: Photo) {
+        val position = photos.indexOfFirst { photo -> photo.checksum == newPhoto.checksum }
+        photos[position] = newPhoto
+        notifyItemChanged(position, newPhoto)
+    }
+
     fun getPhoto(position: Int): Photo = photos.elementAt(position)
 
     val size: Int
         get() = photos.size
-
 }
