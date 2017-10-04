@@ -21,6 +21,8 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
 
     interface Callback {
         fun onDeletePhoto(position: Int)
+
+        fun onEditPhoto(position: Int)
     }
 
     private val viewBinderHelper = ViewBinderHelper()
@@ -47,11 +49,15 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
         private val caption: TextView = view.imageCaption
         private val remarks: TextView = view.imageRemarks
         private val deleteButton = view.delete_item
+        private val editButton = view.edit_item
 
         fun bind(position: Int) {
             val photo = photos[position]
             viewBinderHelper.bind(swipeRevealLayout, photo.checksum)
 
+            editButton.setOnClickListener { _ ->
+                listener.onEditPhoto(this.adapterPosition)
+            }
             deleteButton.setOnClickListener { _ ->
                 listener.onDeletePhoto(this.adapterPosition)
             }

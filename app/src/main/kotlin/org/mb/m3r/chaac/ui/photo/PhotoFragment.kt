@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.SpannableStringBuilder
 import butterknife.OnClick
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
@@ -19,6 +20,7 @@ import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.ui.photo.PhotoContract.View.Companion.ADD_PHOTO
+import org.mb.m3r.chaac.ui.photo.PhotoContract.View.Companion.EDIT_PHOTO
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
 import javax.inject.Inject
@@ -121,6 +123,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
                 .apply {
                     when (action) {
                         ADD_PHOTO -> onAny(this@PhotoFragment::onAddDialogButtonClick)
+                        EDIT_PHOTO -> onAny(this@PhotoFragment::onEditDialogButtonClick)
                     }
 
                 }.show().apply {
@@ -157,8 +160,18 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
         }
     }
 
+    private fun onEditDialogButtonClick(dialog: MaterialDialog, which: DialogAction) {
+        if (which == DialogAction.POSITIVE)
+            TODO("do shit")
+    }
+
     override fun onDeletePhoto(position: Int) {
         val photo = photoAdapter.getPhoto(position)
         presenter.onDeletePhoto(photo)
+    }
+
+    override fun onEditPhoto(position: Int) {
+        val photo = photoAdapter.photos[position]
+        showAddEditPhotoDetail(EDIT_PHOTO, photo.caption, photo.remarks)
     }
 }
