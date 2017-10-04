@@ -101,8 +101,11 @@ class PhotoFragment : BaseFragment(), PhotoContract.View {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
-            presenter.photoTaken()
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            when(resultCode) {
+                AppCompatActivity.RESULT_OK -> presenter.photoTaken()
+                else -> imageTempPath?.let { FileUtil.deleteFile(it) }
+            }
         }
     }
 
