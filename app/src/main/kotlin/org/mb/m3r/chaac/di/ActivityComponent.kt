@@ -1,21 +1,17 @@
 package org.mb.m3r.chaac.di
 
 import dagger.Component
-import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.di.scopes.PerActivity
 import org.mb.m3r.chaac.ui.photo.PhotoActivity
-import org.mb.m3r.chaac.ui.photo.PhotoContract
-import org.mb.m3r.chaac.ui.photo.PhotoModule
+import org.mb.m3r.chaac.ui.photo.PhotoStore
 
 /**
  * @author Melby Baldove
  */
 @PerActivity
-@Component(dependencies = arrayOf(ApplicationComponent::class),
-        modules = arrayOf(PhotoModule.Activity::class))
+@Component(dependencies = [(ApplicationComponent::class)])
 interface ActivityComponent {
-    fun photoRepository(): PhotoRepository
-    fun photoView(): PhotoContract.View
+    fun photoStore(): PhotoStore
 
     fun inject(photoActivity: PhotoActivity)
 }

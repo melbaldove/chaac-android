@@ -24,10 +24,6 @@ abstract class BaseFragment : Fragment() {
 
     private lateinit var unbinder: Unbinder
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initFragmentComponent()

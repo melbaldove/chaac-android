@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.di.scopes.PerActivity
+import org.mb.m3r.chaac.di.scopes.PerApplication
 import org.mb.m3r.chaac.di.scopes.PerFragment
 
 /**
@@ -12,22 +13,18 @@ import org.mb.m3r.chaac.di.scopes.PerFragment
 
 class PhotoModule {
     @Module
-    class Activity {
-        @PerActivity
-        @Provides
-        fun providePhotoView(fragment: PhotoFragment): PhotoContract.View = fragment
-
-        @PerActivity
-        @Provides
-        fun providePhotoFragment() = PhotoFragment()
-    }
-
-    @Module
     class Fragment {
         @Provides
         @PerFragment
         fun providePhotoPresenter(
                 view: PhotoContract.View,
                 repository: PhotoRepository): PhotoContract.Presenter = PhotoPresenter(view, repository)
+    }
+
+    @Module
+    class Store {
+        @Provides
+        @PerApplication
+        fun providePhotoStore(repository: PhotoRepository) = PhotoStore(repository)
     }
 }

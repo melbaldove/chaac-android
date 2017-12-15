@@ -27,7 +27,7 @@ constructor(val view: PhotoContract.View, val repo: PhotoRepository) : PhotoCont
     }
 
     /**
-     * @param {String} path - path where temporary image was stored
+     * @param [path] string - path where temporary image was stored
      */
     override fun savePhoto(path: String) {
         FileUtil.storeImage(path)

@@ -8,6 +8,8 @@ import io.reactivex.subjects.PublishSubject
  * melqbaldove@gmail.com
  */
 abstract class Store {
+    lateinit var action: Action
+
     abstract fun receiveAction(action: Action)
 
     private val mPublisher = PublishSubject.create<String>()
@@ -27,5 +29,10 @@ abstract class Store {
      */
     protected fun notifyChange() {
         mPublisher.onNext("changed")
+    }
+
+    protected fun notifyError(error: AppError) {
+        action = Action.create(action.type, error)
+        notifyChange()
     }
 }
