@@ -38,7 +38,7 @@ object FileUtil {
     fun createTempImageFile(): File {
         val imageFileName = "temp"
         val storageDir = getPictureDirectory()
-                val image = File.createTempFile(
+        val image = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
                 storageDir      /* directory */

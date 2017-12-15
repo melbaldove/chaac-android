@@ -37,9 +37,6 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
         }
     }
 
-
-
-
     private fun loadPhotos() {
         photoRepo.getPhotos()
                 .compose(SchedulerUtil.ioToUi())
@@ -79,7 +76,6 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
         }
         notifyChange()
     }
-
 
     /**
      * @param [path] string - where the temporary file is located

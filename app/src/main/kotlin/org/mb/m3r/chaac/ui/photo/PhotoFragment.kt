@@ -3,10 +3,8 @@ package org.mb.m3r.chaac.ui.photo
 import android.Manifest
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.SpannableStringBuilder
@@ -15,7 +13,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
-import org.mb.m3r.chaac.BuildConfig
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
@@ -29,7 +26,7 @@ import javax.inject.Inject
 /**
  * @author Melby Baldove
  */
-class PhotoFragment : BaseFragment(),  PhotoAdapter.Callback {
+class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
 
     companion object {
         const val TAG = "PHOTO_FRAGMENT"
@@ -89,7 +86,7 @@ class PhotoFragment : BaseFragment(),  PhotoAdapter.Callback {
                     }
                 }
                 PhotoActionCreator.UPDATE_PHOTO -> {
-                    if(!action.error) {
+                    if (!action.error) {
                         updatePhoto(photoStore.photo)
                     }
                 }
