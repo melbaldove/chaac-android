@@ -13,15 +13,6 @@ import org.mb.m3r.chaac.di.scopes.PerFragment
 
 class PhotoModule {
     @Module
-    class Fragment {
-        @Provides
-        @PerFragment
-        fun providePhotoPresenter(
-                view: PhotoContract.View,
-                repository: PhotoRepository): PhotoContract.Presenter = PhotoPresenter(view, repository)
-    }
-
-    @Module
     class Store {
         @Provides
         @PerApplication
