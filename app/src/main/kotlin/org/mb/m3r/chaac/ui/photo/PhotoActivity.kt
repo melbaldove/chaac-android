@@ -10,12 +10,12 @@ import javax.inject.Provider
 
 class PhotoActivity : BaseActivity() {
 
-    @Inject
-    lateinit var fragmentProvider: Provider<PhotoFragment>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent.inject(this)
-        ActivityUtil.addFragmentToActivity(supportFragmentManager, R.id.frag_container, fragmentProvider.get())
+
+        if (savedInstanceState == null) {
+            ActivityUtil.addFragmentToActivity(supportFragmentManager, R.id.frag_container, PhotoFragment())
+        }
     }
 }
