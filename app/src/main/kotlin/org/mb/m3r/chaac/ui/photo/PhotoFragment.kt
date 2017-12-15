@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.SpannableStringBuilder
@@ -13,6 +14,7 @@ import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
+import org.mb.m3r.chaac.BuildConfig
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
@@ -78,7 +80,7 @@ class PhotoFragment : BaseFragment(), PhotoContract.View, PhotoAdapter.Callback 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             FileUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
-                putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(it))
+                putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getUriForFile(context, it))
             }
         }
         if (takePictureIntent.resolveActivity(activity.packageManager) != null) {

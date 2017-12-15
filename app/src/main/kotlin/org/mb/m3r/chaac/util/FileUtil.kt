@@ -1,13 +1,17 @@
 package org.mb.m3r.chaac.util
 
+import android.content.Context
+import android.net.Uri
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Environment.getExternalStoragePublicDirectory
+import android.support.v4.content.FileProvider
 import android.util.Log
 import io.reactivex.Single
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
+import org.mb.m3r.chaac.BuildConfig
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -34,7 +38,7 @@ object FileUtil {
     fun createTempImageFile(): File {
         val imageFileName = "temp"
         val storageDir = getPictureDirectory()
-        val image = File.createTempFile(
+                val image = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
                 storageDir      /* directory */
@@ -95,4 +99,7 @@ object FileUtil {
         }
     }
 
+    fun getUriForFile(context: Context, file: File): Uri {
+        return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
+    }
 }
