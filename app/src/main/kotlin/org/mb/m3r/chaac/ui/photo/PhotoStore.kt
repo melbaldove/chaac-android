@@ -85,7 +85,7 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
                 .compose(SchedulerUtil.ioToUi())
                 .flatMap({ file ->
                     FileUtil.checkSum(file).map({ checksum ->
-                        Photo(checksum, file.path)
+                        Photo(checksum, file.path, null)
                     })
                 })
     }

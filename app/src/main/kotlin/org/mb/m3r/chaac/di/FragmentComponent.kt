@@ -9,8 +9,7 @@ import org.mb.m3r.chaac.ui.photo.PhotoModule
  * @author Melby Baldove
  */
 @PerFragment
-@Component(dependencies = arrayOf(ActivityComponent::class),
-        modules = arrayOf(PhotoModule.Fragment::class))
+@Component(dependencies = arrayOf(ActivityComponent::class))
 interface FragmentComponent {
     fun inject(fragment: PhotoFragment)
 }

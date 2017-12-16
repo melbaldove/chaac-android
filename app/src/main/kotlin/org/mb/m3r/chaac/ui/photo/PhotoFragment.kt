@@ -50,7 +50,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         (activity as BaseActivity).setActionBarTitle(getString(R.string.chaac))
         fragmentComponent.inject(this)
         // show items in reverse(descending) order
-        photo_recycler_view.layoutManager = SnappingLinearLayoutManager(context,
+        photo_recycler_view.layoutManager = SnappingLinearLayoutManager(context!!,
                 LinearLayoutManager.VERTICAL, true).apply { stackFromEnd = true }
         subscribeToStores()
         PhotoActionCreator.loadPhotos()
@@ -115,7 +115,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
     }
 
     private fun showTakePhoto() {
-        if (!ActivityUtil.hasPermission(context, WRITE_EXTERNAL_STORAGE)) {
+        if (!ActivityUtil.hasPermission(context!!, WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     ActivityUtil.PERMISSION_REQUEST_WRITE_EXTERNAL)
             return
@@ -123,10 +123,10 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             FileUtil.createTempImageFile().let {
                 imageTempPath = it.absolutePath
-                putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getUriForFile(context, it))
+                putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getUriForFile(context!!, it))
             }
         }
-        if (takePictureIntent.resolveActivity(activity.packageManager) != null) {
+        if (takePictureIntent.resolveActivity(activity!!.packageManager) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
     }
@@ -150,7 +150,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
     }
 
     private fun showEditPhotoDetail(photo: Photo) {
-        MaterialDialog.Builder(context)
+        MaterialDialog.Builder(context!!)
                 .title("Describe your image :)")
                 .positiveText("Done")
                 .negativeText("Cancel")
@@ -168,7 +168,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
     }
 
     private fun showConfirmDeletePhoto(photo: Photo) {
-        MaterialDialog.Builder(context)
+        MaterialDialog.Builder(context!!)
                 .title("Are you sure you want to delete this?")
                 .positiveText("Delete")
                 .negativeText("Cancel")

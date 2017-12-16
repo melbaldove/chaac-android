@@ -11,12 +11,9 @@ import io.requery.Persistable
 data class Photo(
         @get:Key
         val checksum: String,
-
         val path: String,
-
+        val id: Int?,
         var caption: String = "",
-
         var remarks: String = "",
-
         val createdDate: Long = System.currentTimeMillis()
 ) : Persistable

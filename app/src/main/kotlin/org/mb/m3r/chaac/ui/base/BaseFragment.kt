@@ -37,8 +37,8 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater?.inflate(layoutRes, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(layoutRes, container, false)
         unbinder = ButterKnife.bind(this, view!!)
 
         return view

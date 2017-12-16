@@ -24,10 +24,12 @@ android {
             minifyEnabled false
         }
     }
-
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
+    }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
     }
 }
 
