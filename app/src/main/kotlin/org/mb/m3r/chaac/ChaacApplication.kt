@@ -1,6 +1,6 @@
 package org.mb.m3r.chaac
 
-import android.app.Application
+import android.support.multidex.MultiDexApplication
 import com.squareup.leakcanary.LeakCanary
 import org.mb.m3r.chaac.di.ApplicationComponent
 import org.mb.m3r.chaac.di.DaggerApplicationComponent
@@ -8,7 +8,7 @@ import org.mb.m3r.chaac.di.DaggerApplicationComponent
 /**
  * @author Melby Baldove
  */
-class ChaacApplication : Application() {
+class ChaacApplication : MultiDexApplication() {
 
     lateinit var applicationComponent: ApplicationComponent
 
