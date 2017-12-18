@@ -15,9 +15,8 @@ import org.mb.m3r.chaac.ui.photo.PhotoStore
  * @author Melby Baldove
  */
 @PerApplication
-@Component(modules = [(RepositoryModule::class), (ApplicationModule::class), (PhotoModule.Store::class)])
+@Component(modules = [(RepositoryModule::class), (ApplicationModule::class), (PhotoModule.Store::class), (NetworkModule::class)])
 interface ApplicationComponent {
-    fun photoRepository(): PhotoRepository
     fun photoStore(): PhotoStore
 
     fun inject(app: ChaacApplication)
