@@ -2,6 +2,7 @@ package org.mb.m3r.chaac.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import org.mb.m3r.chaac.di.scopes.PerApplication

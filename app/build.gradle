@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "org.mb.m3r.chaac"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -44,7 +44,7 @@ kapt {
 }
 
 dependencies {
-    def supportLibraryVersion = "27.0.2"
+    def supportLibraryVersion = "26.1.0"
     def daggerVersion = "2.11"
     def requeryVersion = "1.4.0"
     def glideVersion = "4.1.1"

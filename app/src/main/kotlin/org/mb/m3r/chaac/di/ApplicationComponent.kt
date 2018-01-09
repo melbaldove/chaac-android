@@ -10,16 +10,19 @@ import org.mb.m3r.chaac.data.source.remote.UploadStore
 import org.mb.m3r.chaac.di.scopes.PerApplication
 import org.mb.m3r.chaac.ui.photo.PhotoModule
 import org.mb.m3r.chaac.ui.photo.PhotoStore
+import org.mb.m3r.chaac.ui.signin.SigninModule
+import org.mb.m3r.chaac.ui.signin.SigninStore
 
 
 /**
  * @author Melby Baldove
  */
 @PerApplication
-@Component(modules = [(RepositoryModule::class), (ApplicationModule::class), (PhotoModule.Store::class), (NetworkModule::class)])
+@Component(modules = [(RepositoryModule::class), (ApplicationModule::class), (PhotoModule.Store::class), (NetworkModule::class), (SigninModule::class)])
 interface ApplicationComponent {
     fun photoStore(): PhotoStore
     fun uploadStore(): UploadStore
+    fun signinStore(): SigninStore
 
     fun inject(app: ChaacApplication)
 

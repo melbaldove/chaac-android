@@ -9,4 +9,6 @@
     <string name="chaac">Chaac</string>
     <string name="photoView_desc">captured image</string>
     <string name="no_caption">No Caption</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
