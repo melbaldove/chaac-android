@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.SpannableStringBuilder
+import android.util.Log
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import io.reactivex.disposables.CompositeDisposable
@@ -15,13 +16,15 @@ import kotlinx.android.synthetic.main.new_photo.*
 import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
+import org.mb.m3r.chaac.data.source.remote.UploadStore
+import org.mb.m3r.chaac.flux.AppError
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
+import java.util.*
 import javax.inject.Inject
-
 
 /**
  * @author Melby Baldove
@@ -35,9 +38,10 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
     override val layoutRes: Int = R.layout.photo_frag
 
     @Inject lateinit var photoStore: PhotoStore
+    @Inject lateinit var uploadStore: UploadStore
+    var test = 0f
 
     val subscriptions = CompositeDisposable()
-
 
     lateinit var photoAdapter: PhotoAdapter
 
@@ -57,13 +61,18 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
     }
 
     private fun subscribeToStores() {
-        photoStore.observable().subscribe {
-            render()
-        }.let { subscriptions.add(it) }
+        photoStore.observable()
+                .subscribe {
+                    renderForPhotoStore()
+                }.let { subscriptions.add(it) }
+        uploadStore.observable()
+                .subscribe {
+                    renderForUploadStore()
+                }.let { subscriptions.add(it) }
     }
 
-    private fun render() {
-        photoStore.action.let { action ->
+    private fun renderForPhotoStore() {
+        photoStore.action?.let { action ->
             when (action.type) {
                 PhotoActionCreator.GET_PHOTOS -> {
                     if (!action.error) {
@@ -94,13 +103,44 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun renderForUploadStore() {
+        uploadStore.action?.let { action ->
+            when (action.type) {
+                PhotoActionCreator.UPDATE_PHOTO_UPLOAD_PROGRESS -> {
+                    if (!action.error) {
+                        Log.d("upload", (uploadStore.uploadProgress.first as Photo).checksum)
+                        Log.d("upload", uploadStore.uploadProgress.second.toString())
+                        photoAdapter.updatePhotoUploadProgress(uploadStore.uploadProgress as Pair<Photo, Float>)
+                    } else {
+
+                    }
+                }
+                PhotoActionCreator.PHOTO_UPLOADED -> {
+                    if (!action.error) {
+                        Log.d("uploaded", "UPLOADED")
+                    } else {
+                        Log.d("uploaded", (action.payload as AppError).message)
+                    }
+                }
+                else -> {
+                }
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         subscriptions.clear()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun showPhotos(photos: List<Photo>) {
-        photoAdapter = PhotoAdapter(photos as ArrayList<Photo>, this)
+        val uploadProgressPair = photos.map {
+            // 0 for now refactor this later
+            Pair(it, 0f)
+        }
+        photoAdapter = PhotoAdapter(uploadProgressPair as ArrayList<Pair<Photo, Float>>, this)
         photo_recycler_view.adapter = photoAdapter
     }
 

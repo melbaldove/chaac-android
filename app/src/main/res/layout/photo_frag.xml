@@ -24,5 +24,4 @@
         app:elevation="@dimen/material_elevation_fab_resting"
         app:layout_anchor="@id/photo_recycler_view"
         app:layout_anchorGravity="bottom|right|end" />
-
 </android.support.design.widget.CoordinatorLayout>

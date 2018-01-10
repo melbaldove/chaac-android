@@ -14,7 +14,7 @@ import retrofit2.http.Path
  */
 interface ChaacAPI {
     companion object {
-        val URL = "http://192.168.11.110:4000/api/"
+        val URL = "http://192.168.40.91:4000/api/"
     }
 
     @POST("users/{id}/photos")

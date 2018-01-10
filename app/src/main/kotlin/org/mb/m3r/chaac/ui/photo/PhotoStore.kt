@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.ui.photo
 
+import android.util.Log
 import io.reactivex.Single
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.PhotoRepository
@@ -18,6 +19,9 @@ import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
  * melqbaldove@gmail.com
  */
 class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
+    override val supportedActions: Array<String>
+        get() = arrayOf(GET_PHOTOS, SAVE_PHOTO, UPDATE_PHOTO, DELETE_PHOTO)
+
     init {
         Dispatcher.register(this)
     }
@@ -28,12 +32,14 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
         private set
 
     override fun receiveAction(action: Action) {
-        this.action = action
-        when (action.type) {
-            GET_PHOTOS -> loadPhotos()
-            SAVE_PHOTO -> savePhoto()
-            UPDATE_PHOTO -> updatePhoto()
-            DELETE_PHOTO -> deletePhoto()
+        if(action.type in supportedActions) {
+            this.action = action
+            when (action.type) {
+                GET_PHOTOS -> loadPhotos()
+                SAVE_PHOTO -> savePhoto()
+                UPDATE_PHOTO -> updatePhoto()
+                DELETE_PHOTO -> deletePhoto()
+            }
         }
     }
 
@@ -50,26 +56,32 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
     }
 
     private fun savePhoto() {
-        composePhoto(action.payload as String)
-                .subscribe({ photo ->
-                    photoRepo.savePhoto(photo)
-                    this@PhotoStore.photo = photo
+        composePhoto(action?.payload as String)
+                .flatMap(photoRepo::createPhoto)
+                .compose(SchedulerUtil.ioToUi())
+                .subscribe({
+                    photo = it
                     notifyChange()
-                }, { throwable ->
-                    // TODO: Handle errors
+                }, {
+                    Log.e("uploadError", it.message, it)
                 })
     }
 
     private fun updatePhoto() {
-        (action.payload as Photo).let {
-            photoRepo.savePhoto(it)
-            photo = it
+        (action?.payload as Photo).let {
+            photoRepo.updatePhoto(it)
+                    .compose(SchedulerUtil.ioToUi())
+                    .subscribe({
+                        photo = it
+                        notifyChange()
+                    }, {
+                        // TODO: Handle errors
+                    })
         }
-        notifyChange()
     }
 
     private fun deletePhoto() {
-        (action.payload as Photo).let {
+        (action?.payload as Photo).let {
             FileUtil.deleteFile(it.path)
             photoRepo.deletePhoto(it)
             photo = it

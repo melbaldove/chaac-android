@@ -8,7 +8,9 @@ import io.reactivex.subjects.PublishSubject
  * melqbaldove@gmail.com
  */
 abstract class Store {
-    lateinit var action: Action
+    var action: Action? = null
+
+    abstract val supportedActions: Array<String>
 
     abstract fun receiveAction(action: Action)
 
@@ -32,7 +34,10 @@ abstract class Store {
     }
 
     protected fun notifyError(error: AppError) {
-        action = Action.create(action.type, error)
-        notifyChange()
+        action?.let { action ->
+            this.action = Action.create(action.type, error)
+            notifyChange()
+        }
+
     }
 }

@@ -13,6 +13,8 @@ object PhotoActionCreator {
     const val SAVE_PHOTO = "SAVE_PHOTO"
     const val UPDATE_PHOTO = "UPDATE_PHOTO"
     const val GET_PHOTOS = "GET_PHOTOS"
+    const val UPDATE_PHOTO_UPLOAD_PROGRESS = "UPDATE_PHOTO_UPLOAD_PROGRESS"
+    const val PHOTO_UPLOADED = "PHOTO_UPLOADED"
 
     fun deletePhoto(photo: Photo) {
         Dispatcher.dispatch(Action.create(DELETE_PHOTO, photo))
@@ -28,6 +30,18 @@ object PhotoActionCreator {
 
     fun updatePhoto(photo: Photo) {
         Dispatcher.dispatch(Action.create(UPDATE_PHOTO, photo))
+    }
+
+    fun updateUploadProgress(uploadProgress: Pair<Photo, Float>) {
+        Dispatcher.dispatch(Action.create(UPDATE_PHOTO_UPLOAD_PROGRESS, uploadProgress))
+    }
+
+    fun photoUploaded(photo: Photo) {
+
+    }
+
+    fun photoUploaded(throwable: Throwable) {
+        Dispatcher.dispatch(Action.create(PHOTO_UPLOADED, throwable))
     }
 
 }

@@ -27,10 +27,10 @@ class PhotoRepositoryImplTest {
     fun savePhoto() {
         val mockPhoto = Photo(checksum = "someRandomString", path = "somePath", caption = "test", remarks = "test", createdDate = System.currentTimeMillis())
         val mockDb = mutableListOf<Photo>()
-        `when`(localDataSource.savePhoto(mockPhoto)).then { invocation: InvocationOnMock? ->
+        `when`(localDataSource.createPhoto(mockPhoto)).then { invocation: InvocationOnMock? ->
             mockDb.add(invocation!!.arguments.first() as Photo)
         }
-        photoRepository.savePhoto(mockPhoto)
+        photoRepository.createPhoto(mockPhoto)
 
         assertTrue(mockDb.contains(mockPhoto))
     }

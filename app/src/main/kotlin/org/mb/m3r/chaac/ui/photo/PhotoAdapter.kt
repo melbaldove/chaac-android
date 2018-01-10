@@ -17,7 +17,7 @@ import org.mb.m3r.chaac.data.Photo
  * @author Melby Baldove
  * melqbaldove@gmail.com
  */
-class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>() {
+class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Callback) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>() {
 
     interface Callback {
         fun onDeletePhoto(position: Int)
@@ -50,9 +50,10 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
         private val remarks: TextView = view.imageRemarks
         private val deleteButton = view.delete_item
         private val editButton = view.edit_item
+        private val progressBar = view.progressBarPhoto
 
         fun bind(position: Int) {
-            val photo = photos[position]
+            val photo = photos[position].first
             viewBinderHelper.bind(swipeRevealLayout, photo.checksum)
 
             editButton.setOnClickListener { _ ->
@@ -71,29 +72,47 @@ class PhotoAdapter(val photos: ArrayList<Photo>, val listener: Callback) : Recyc
             remarks.text =
                     if (photo.remarks.isEmpty()) "This is a cool photo. Rock on MB!"
                     else photo.remarks
+            val progressUpdate = photos[position].second.toInt()
+            if(progressUpdate > 0 ) {
+                progressBar.progress = photos[position].second.toInt()
+                progressBar.visibility = View.VISIBLE
+            }else {
+                progressBar.visibility = View.INVISIBLE
+
+            }
+
         }
+
     }
 
     fun addPhoto(photo: Photo): Photo {
-        photos.add(photo)
+        photos.add(Pair(photo, 0f))
         notifyItemInserted(photos.size - 1)
         return photo
     }
 
     fun removePhoto(photo: Photo): Photo {
-        val position = photos.indexOf(photo)
+        val position = photos.indexOfFirst { pair -> pair.first == photo }
         photos.removeAt(position)
         notifyItemRemoved(position)
         return photo
     }
 
     fun updatePhoto(newPhoto: Photo) {
-        val position = photos.indexOfFirst { photo -> photo.checksum == newPhoto.checksum }
-        photos[position] = newPhoto
-        notifyItemChanged(position, newPhoto)
+        val position = photos.indexOfFirst { pair -> pair.first.checksum == newPhoto.checksum }
+        photos[position] = Pair(newPhoto, photos[position].second)
+        notifyItemChanged(position, photos[position])
     }
 
-    fun getPhoto(position: Int): Photo = photos.elementAt(position)
+    fun updatePhotoUploadProgress(uploadProgress: Pair<Photo, Float>) {
+        val position = photos.indexOfFirst { pair -> pair.first.checksum == uploadProgress.first.checksum }
+        if(position != -1) {
+            photos[position] = uploadProgress
+            notifyItemChanged(position, uploadProgress)
+        }
+    }
+
+    fun getPhoto(position: Int): Photo = photos.elementAt(position).first
 
     val size: Int
         get() = photos.size

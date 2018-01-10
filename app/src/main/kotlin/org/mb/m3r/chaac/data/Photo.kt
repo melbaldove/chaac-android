@@ -15,5 +15,6 @@ data class Photo(
         val id: Int?,
         var caption: String = "",
         var remarks: String = "",
+        var status: String = "",
         val createdDate: Long = System.currentTimeMillis()
 ) : Persistable
