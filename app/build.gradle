@@ -48,7 +48,7 @@ dependencies {
     def daggerVersion = "2.11"
     def requeryVersion = "1.4.0"
     def glideVersion = "4.1.1"
-    def retrofitVersion = "2.1.0"
+    def retrofitVersion = "2.3.0"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -85,7 +85,7 @@ dependencies {
 
     // Network
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Debugging
