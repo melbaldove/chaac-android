@@ -3,13 +3,15 @@ package org.mb.m3r.chaac.ui.photo
 import android.util.Log
 import io.reactivex.Single
 import org.mb.m3r.chaac.data.Photo
-import org.mb.m3r.chaac.data.source.PhotoRepository
+import org.mb.m3r.chaac.data.source.PhotoRepositoryMediator
 import org.mb.m3r.chaac.flux.Action
 import org.mb.m3r.chaac.flux.Dispatcher
 import org.mb.m3r.chaac.flux.Store
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.DELETE_PHOTO
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.GET_PHOTOS
+import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.PHOTO_SYNCED
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.SAVE_PHOTO
+import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.SYNC_TO_SERVER
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.UPDATE_PHOTO
 import org.mb.m3r.chaac.util.FileUtil
 import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
@@ -18,9 +20,9 @@ import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
  * @author Melby Baldove
  * melqbaldove@gmail.com
  */
-class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
+class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
     override val supportedActions: Array<String>
-        get() = arrayOf(GET_PHOTOS, SAVE_PHOTO, UPDATE_PHOTO, DELETE_PHOTO)
+        get() = arrayOf(GET_PHOTOS, SAVE_PHOTO, UPDATE_PHOTO, DELETE_PHOTO, SYNC_TO_SERVER, PHOTO_SYNCED)
 
     init {
         Dispatcher.register(this)
@@ -32,13 +34,15 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
         private set
 
     override fun receiveAction(action: Action) {
-        if(action.type in supportedActions) {
+        if (action.type in supportedActions) {
             this.action = action
             when (action.type) {
                 GET_PHOTOS -> loadPhotos()
                 SAVE_PHOTO -> savePhoto()
                 UPDATE_PHOTO -> updatePhoto()
                 DELETE_PHOTO -> deletePhoto()
+                SYNC_TO_SERVER -> syncToServer()
+                PHOTO_SYNCED -> photoSynced()
             }
         }
     }
@@ -68,8 +72,12 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
     }
 
     private fun updatePhoto() {
-        (action?.payload as Photo).let {
-            photoRepo.updatePhoto(it)
+        (action?.payload as Photo).let { changedPhoto ->
+            photoRepo.getPhoto(changedPhoto.checksum)
+                    .map {
+                        it.copy(caption = changedPhoto.caption, remarks = changedPhoto.remarks)
+                    }
+                    .flatMap(photoRepo::updatePhoto)
                     .compose(SchedulerUtil.ioToUi())
                     .subscribe({
                         photo = it
@@ -100,6 +108,17 @@ class PhotoStore(private val photoRepo: PhotoRepository) : Store() {
                         Photo(checksum, file.path, null)
                     })
                 })
+    }
+
+    private fun photoSynced() {
+        (action?.payload as Photo).let {
+            photo = it
+            notifyChange()
+        }
+    }
+
+    private fun syncToServer() {
+        photoRepo.syncToServer()
     }
 }
 

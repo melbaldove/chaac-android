@@ -26,7 +26,7 @@ class NetworkModule {
     fun provideOkHttpClient(context: Context): OkHttpClient {
         return OkHttpClient.Builder()
                 .addInterceptor(ChuckInterceptor(context))
-                .addInterceptor(StethoInterceptor())
+                .addNetworkInterceptor(StethoInterceptor())
                 .build()
     }
 

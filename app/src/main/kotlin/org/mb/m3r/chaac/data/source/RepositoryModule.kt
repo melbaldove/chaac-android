@@ -27,8 +27,8 @@ class RepositoryModule {
 
     @Provides
     @PerApplication
-    fun providesPhotoRepository(@Local localSource: LocalPhotoRepository,
-                                @Remote remoteSource: PhotoRepository): PhotoRepository =
+    fun providesPhotoRepositoryMediator(@Local localSource: LocalPhotoRepository,
+                                @Remote remoteSource: PhotoRepository): PhotoRepositoryMediator =
             PhotoRepositoryImpl(localSource, remoteSource)
 
     @Provides
@@ -39,7 +39,7 @@ class RepositoryModule {
     @Provides
     @PerApplication
     @Remote
-    fun providesRemotePhotoDataSource(api: ChaacAPI): PhotoRepository = RemotePhotoDataSource(api)
+    fun providesRemotePhotoDataSource(api: ChaacAPI, tokenRepo: TokenRepository): PhotoRepository = RemotePhotoDataSource(api, tokenRepo)
 
     @Provides
     @PerApplication

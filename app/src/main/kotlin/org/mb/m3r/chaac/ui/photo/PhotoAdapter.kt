@@ -51,6 +51,7 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
         private val deleteButton = view.delete_item
         private val editButton = view.edit_item
         private val progressBar = view.progressBarPhoto
+        private val statusImg = view.statusImg
 
         fun bind(position: Int) {
             val photo = photos[position].first
@@ -73,12 +74,21 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
                     if (photo.remarks.isEmpty()) "This is a cool photo. Rock on MB!"
                     else photo.remarks
             val progressUpdate = photos[position].second.toInt()
-            if(progressUpdate > 0 ) {
+            if (progressUpdate > 0) {
                 progressBar.progress = photos[position].second.toInt()
                 progressBar.visibility = View.VISIBLE
-            }else {
+            } else {
                 progressBar.visibility = View.INVISIBLE
 
+            }
+            when (photo.status) {
+                "UNSYNCED",
+                "NEW" -> {
+                    statusImg.setImageResource(R.drawable.cloud_sync)
+                }
+                else -> {
+                    statusImg.setImageResource(R.drawable.cloud_check)
+                }
             }
 
         }
@@ -106,10 +116,14 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
 
     fun updatePhotoUploadProgress(uploadProgress: Pair<Photo, Float>) {
         val position = photos.indexOfFirst { pair -> pair.first.checksum == uploadProgress.first.checksum }
-        if(position != -1) {
+        if (position != -1) {
             photos[position] = uploadProgress
             notifyItemChanged(position, uploadProgress)
         }
+    }
+
+    fun updateStatus(photo: Photo) {
+        updatePhoto(photo)
     }
 
     fun getPhoto(position: Int): Photo = photos.elementAt(position).first

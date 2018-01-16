@@ -86,7 +86,7 @@
                 android:layout_toRightOf="@id/photoView"
                 android:lines="6" />
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/statusImg"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_alignParentEnd="true"

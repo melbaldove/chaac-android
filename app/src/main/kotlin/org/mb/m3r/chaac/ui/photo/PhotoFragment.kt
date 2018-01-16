@@ -23,6 +23,7 @@ import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
+import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 import java.util.*
 import javax.inject.Inject
 
@@ -57,6 +58,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         photo_recycler_view.layoutManager = SnappingLinearLayoutManager(context!!,
                 LinearLayoutManager.VERTICAL, true).apply { stackFromEnd = true }
         subscribeToStores()
+        PhotoActionCreator.syncToServer()
         PhotoActionCreator.loadPhotos()
     }
 
@@ -99,6 +101,11 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
                         updatePhoto(photoStore.photo)
                     }
                 }
+                PhotoActionCreator.PHOTO_SYNCED -> {
+                    if (!action.error) {
+                        setPhotoAsSynced(photoStore.photo)
+                    }
+                }
             }
         }
     }
@@ -118,7 +125,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
                 }
                 PhotoActionCreator.PHOTO_UPLOADED -> {
                     if (!action.error) {
-                        Log.d("uploaded", "UPLOADED")
+
                     } else {
                         Log.d("uploaded", (action.payload as AppError).message)
                     }
@@ -235,5 +242,9 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         photoAdapter.getPhoto(position).let {
             showEditPhotoDetail(it)
         }
+    }
+
+    private fun setPhotoAsSynced(photo: Photo) {
+        photoAdapter.updateStatus(photo)
     }
 }

@@ -5,10 +5,7 @@ import okhttp3.MultipartBody
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.ui.signin.Token
 import org.mb.m3r.chaac.ui.signin.UserPasswordCredential
-import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 /**
  * @author Melby Baldove
@@ -21,9 +18,15 @@ interface ChaacAPI {
 
     @POST("users/{id}/photos")
     fun uploadPhoto(@Header("Authorization") token: String,
-                    @Path("id") id: Int,
-                    @Body requestBody: MultipartBody): Single<Photo>
+                    @Path("id") id: String,
+                    @Body requestBody: MultipartBody): Single<Response<Photo>>
 
     @POST("sessions")
     fun authenticateCredentials(@Body user: HashMap<String, UserPasswordCredential>): Single<Response<Token>>
+
+    @PUT("users/{id}/photos/{photoId}")
+    fun updatePhoto(@Header("Authorization") token: String,
+                    @Path("id") id: String,
+                    @Path("photoId") photoId: String,
+                    @Body photo: HashMap<String, Photo>): Single<Response<Photo>>
 }

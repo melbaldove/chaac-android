@@ -15,4 +15,6 @@ interface PhotoRepository {
     fun getPhotos(): Flowable<Photo>
 
     fun deletePhoto(photo: Photo)
+
+    fun getPhoto(key: String): Single<Photo>
 }

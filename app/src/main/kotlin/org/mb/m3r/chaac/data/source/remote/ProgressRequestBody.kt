@@ -55,8 +55,6 @@ class ProgressRequestBody(private val mFile: File) : RequestBody() {
                 //prevent publishing too many updates, which slows upload, by checking if the upload has progressed by at least 1 percent
                 if (progress - lastProgressPercentUpdate > 1 || progress == 100f) {
                     // publish progress
-                    // EMULATE SLOW NET REMOVE THIS LATER!!!!!!!!!!!!!!
-                    Thread.sleep(100)
                     getProgressSubject.onNext(progress)
                     lastProgressPercentUpdate = progress
                 }

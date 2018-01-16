@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.ui.signin
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import butterknife.ButterKnife
@@ -10,6 +11,7 @@ import org.mb.m3r.chaac.ChaacApplication
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.di.ActivityComponent
 import org.mb.m3r.chaac.di.DaggerActivityComponent
+import org.mb.m3r.chaac.ui.photo.PhotoActivity
 import org.mb.m3r.chaac.ui.signin.SigninActionCreator.AUTHENTICATE_CREDENTIALS
 import org.mb.m3r.chaac.ui.signin.SigninActionCreator.CHECK_FOR_TOKEN
 import javax.inject.Inject

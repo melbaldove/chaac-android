@@ -15,6 +15,8 @@ object PhotoActionCreator {
     const val GET_PHOTOS = "GET_PHOTOS"
     const val UPDATE_PHOTO_UPLOAD_PROGRESS = "UPDATE_PHOTO_UPLOAD_PROGRESS"
     const val PHOTO_UPLOADED = "PHOTO_UPLOADED"
+    const val PHOTO_SYNCED = "PHOTO_SYNCED"
+    const val SYNC_TO_SERVER = "SYNC_TO_SERVER"
 
     fun deletePhoto(photo: Photo) {
         Dispatcher.dispatch(Action.create(DELETE_PHOTO, photo))
@@ -37,11 +39,19 @@ object PhotoActionCreator {
     }
 
     fun photoUploaded(photo: Photo) {
-
+        Dispatcher.dispatch(Action.create(PHOTO_UPLOADED, photo))
     }
 
     fun photoUploaded(throwable: Throwable) {
         Dispatcher.dispatch(Action.create(PHOTO_UPLOADED, throwable))
+    }
+
+    fun photoSynced(photo: Photo) {
+        Dispatcher.dispatch(Action.create(PHOTO_SYNCED, photo))
+    }
+
+    fun syncToServer() {
+        Dispatcher.dispatch(Action.create(SYNC_TO_SERVER, null))
     }
 
 }

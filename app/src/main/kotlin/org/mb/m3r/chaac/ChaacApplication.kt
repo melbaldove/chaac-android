@@ -1,6 +1,7 @@
 package org.mb.m3r.chaac
 
 import android.support.multidex.MultiDexApplication
+import com.facebook.stetho.Stetho
 import com.squareup.leakcanary.LeakCanary
 import org.mb.m3r.chaac.di.ApplicationComponent
 import org.mb.m3r.chaac.di.DaggerApplicationComponent
@@ -27,6 +28,8 @@ class ChaacApplication : MultiDexApplication() {
         applicationComponent = DaggerApplicationComponent.builder()
                 .application(this)
                 .build()
+
+        Stetho.initializeWithDefaults(applicationContext)
     }
 }
 
