@@ -90,9 +90,7 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
                     statusImg.setImageResource(R.drawable.cloud_check)
                 }
             }
-
         }
-
     }
 
     fun addPhoto(photo: Photo): Photo {

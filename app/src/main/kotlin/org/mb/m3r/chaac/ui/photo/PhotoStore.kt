@@ -35,44 +35,43 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
 
     override fun receiveAction(action: Action) {
         if (action.type in supportedActions) {
-            this.action = action
             when (action.type) {
-                GET_PHOTOS -> loadPhotos()
-                SAVE_PHOTO -> savePhoto()
-                UPDATE_PHOTO -> updatePhoto()
-                DELETE_PHOTO -> deletePhoto()
+                GET_PHOTOS -> loadPhotos(action)
+                SAVE_PHOTO -> savePhoto(action)
+                UPDATE_PHOTO -> updatePhoto(action)
+                DELETE_PHOTO -> deletePhoto(action)
                 SYNC_TO_SERVER -> syncToServer()
-                PHOTO_SYNCED -> photoSynced()
+                PHOTO_SYNCED -> photoSynced(action)
             }
         }
     }
 
-    private fun loadPhotos() {
+    private fun loadPhotos(action: Action) {
         photoRepo.getPhotos()
                 .compose(SchedulerUtil.ioToUi())
                 .toSortedList({ x, y -> x.createdDate.compareTo(y.createdDate) })
                 .subscribe({ photoList ->
                     photos = photoList
-                    notifyChange()
+                    notifyChange(action)
                 }, { throwable ->
                     // TODO: Handle errors
                 })
     }
 
-    private fun savePhoto() {
-        composePhoto(action?.payload as String)
+    private fun savePhoto(action: Action) {
+        composePhoto(action.payload as String)
                 .flatMap(photoRepo::createPhoto)
                 .compose(SchedulerUtil.ioToUi())
                 .subscribe({
                     photo = it
-                    notifyChange()
+                    notifyChange(action)
                 }, {
                     Log.e("uploadError", it.message, it)
                 })
     }
 
-    private fun updatePhoto() {
-        (action?.payload as Photo).let { changedPhoto ->
+    private fun updatePhoto(action: Action) {
+        (action.payload as Photo).let { changedPhoto ->
             photoRepo.getPhoto(changedPhoto.checksum)
                     .map {
                         it.copy(caption = changedPhoto.caption, remarks = changedPhoto.remarks)
@@ -81,22 +80,22 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
                     .compose(SchedulerUtil.ioToUi())
                     .subscribe({
                         photo = it
-                        notifyChange()
+                        notifyChange(action)
                     }, {
                         // TODO: Handle errors
                     })
         }
     }
 
-    private fun deletePhoto() {
-        (action?.payload as Photo).let {
+    private fun deletePhoto(action: Action) {
+        (action.payload as Photo).let {
             FileUtil.deleteFile(it.path)
             photoRepo.deletePhoto(it).subscribe({}, {
                 Log.e("deleteError", it.message, it)
             })
             photo = it
         }
-        notifyChange()
+        notifyChange(action)
     }
 
     /**
@@ -112,10 +111,10 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
                 })
     }
 
-    private fun photoSynced() {
-        (action?.payload as Photo).let {
+    private fun photoSynced(action: Action) {
+        (action.payload as Photo).let {
             photo = it
-            notifyChange()
+            notifyChange(action)
         }
     }
 

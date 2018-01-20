@@ -14,7 +14,7 @@ abstract class Store {
 
     abstract fun receiveAction(action: Action)
 
-    private val mPublisher = PublishSubject.create<String>()
+    private val mPublisher = PublishSubject.create<Action>()
 
     /**
      * Returns the [Observable] to subscribe, by default this will run
@@ -22,21 +22,21 @@ abstract class Store {
      * [Observable.subscribeOn] or [Observable.observeOn]
      * unless thread safety is not needed.
      */
-    fun observable(): Observable<String> {
+    fun observable(): Observable<Action> {
         return mPublisher
     }
 
     /**
      * Notify subscribers that store changed
      */
-    protected fun notifyChange() {
-        mPublisher.onNext("changed")
+    protected fun notifyChange(action: Action) {
+        mPublisher.onNext(action)
     }
 
     protected fun notifyError(error: AppError) {
         action?.let { action ->
             this.action = Action.create(action.type, error)
-            notifyChange()
+            notifyChange(action)
         }
 
     }

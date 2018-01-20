@@ -11,6 +11,7 @@ import org.mb.m3r.chaac.ChaacApplication
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.di.ActivityComponent
 import org.mb.m3r.chaac.di.DaggerActivityComponent
+import org.mb.m3r.chaac.flux.Action
 import org.mb.m3r.chaac.ui.photo.PhotoActivity
 import org.mb.m3r.chaac.ui.signin.SigninActionCreator.AUTHENTICATE_CREDENTIALS
 import org.mb.m3r.chaac.ui.signin.SigninActionCreator.CHECK_FOR_TOKEN
@@ -49,24 +50,22 @@ class SigninActivity : AppCompatActivity() {
     private fun subscribeToStores() {
         signinStore.observable()
                 .subscribe({
-                    renderForSigninStore()
+                    renderForSigninStore(it)
                 }).let { subscriptions.add(it) }
     }
 
-    private fun renderForSigninStore() {
-        signinStore.action.let { action ->
-            when (action?.type) {
-                CHECK_FOR_TOKEN -> {
-                    if (!action.error) {
-                        navigateToPhotoActivity()
-                    }
+    private fun renderForSigninStore(action: Action) {
+        when (action.type) {
+            CHECK_FOR_TOKEN -> {
+                if (!action.error) {
+                    navigateToPhotoActivity()
                 }
-                AUTHENTICATE_CREDENTIALS -> {
-                    if (!action.error) {
-                        navigateToPhotoActivity()
-                    } else {
-                        // TODO: SHOW LOGIN ERROR
-                    }
+            }
+            AUTHENTICATE_CREDENTIALS -> {
+                if (!action.error) {
+                    navigateToPhotoActivity()
+                } else {
+                    // TODO: SHOW LOGIN ERROR
                 }
             }
         }

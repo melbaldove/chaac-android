@@ -31,18 +31,20 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
             this.action = action
             when (action.type) {
                 CHECK_FOR_TOKEN -> {
-                    getToken()
+                    getToken(action)
                 }
                 AUTHENTICATE_CREDENTIALS -> {
-                    (action.payload as Pair<String, String>).let { pair ->
-                        authenticateCredentails(pair.first, pair.second)
-                    }
+                    authenticateCredentails(action)
                 }
             }
         }
     }
 
-    private fun authenticateCredentails(username: String, password: String) {
+
+    private fun authenticateCredentails(action: Action) {
+        val username = (action.payload as Pair<*, *>).first as String
+        val password = action.payload.second as String
+
         val map = HashMap<String, UserPasswordCredential>()
         map.put("user", UserPasswordCredential(username, password))
         api.authenticateCredentials(map)
@@ -54,19 +56,19 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                 .flatMap(tokenRepository::saveToken)
                 .subscribe({ token ->
                     this.token = token
-                    notifyChange()
+                    notifyChange(action)
 
                 }, {
                     notifyError(AppError(it))
                 })
     }
 
-    private fun getToken() {
+    private fun getToken(action: Action) {
         tokenRepository.getToken()
                 .compose(SchedulerUtil.ioToUi())
                 .subscribe({ token ->
                     this.token = token
-                    notifyChange()
+                    notifyChange(action)
                 }, { throwable ->
                     notifyError(AppError(throwable))
                 })

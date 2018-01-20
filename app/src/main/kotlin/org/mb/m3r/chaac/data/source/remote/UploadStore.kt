@@ -24,30 +24,29 @@ class UploadStore : Store() {
     lateinit var uploadedFile: Any
 
     override fun receiveAction(action: Action) {
-        if(action.type in supportedActions) {
-            this.action = action
+        if (action.type in supportedActions) {
             when (action.type) {
-                UPDATE_PHOTO_UPLOAD_PROGRESS -> updateUploadProgress()
-                PHOTO_UPLOADED -> photoUploaded()
+                UPDATE_PHOTO_UPLOAD_PROGRESS -> updateUploadProgress(action)
+                PHOTO_UPLOADED -> photoUploaded(action)
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun updateUploadProgress() {
-        (action?.payload as Pair<Any, Float>).let {
+    private fun updateUploadProgress(action: Action) {
+        (action.payload as Pair<Any, Float>).let {
             uploadProgress = it
-            notifyChange()
+            notifyChange(action)
         }
     }
 
-    private fun photoUploaded() {
-        if(action?.payload is Throwable) {
-            notifyError(AppError(action?.payload as Throwable))
+    private fun photoUploaded(action: Action) {
+        if (action.payload is Throwable) {
+            notifyError(AppError(action.payload))
         } else {
-            action?.payload?.let {
+            action.payload?.let {
                 uploadedFile = it
-                notifyChange()
+                notifyChange(action)
             }
         }
     }

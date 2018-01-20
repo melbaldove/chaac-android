@@ -17,13 +17,13 @@ import kotlinx.android.synthetic.main.photo_frag.*
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.remote.UploadStore
+import org.mb.m3r.chaac.flux.Action
 import org.mb.m3r.chaac.flux.AppError
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
-import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 import java.util.*
 import javax.inject.Inject
 
@@ -58,82 +58,81 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         photo_recycler_view.layoutManager = SnappingLinearLayoutManager(context!!,
                 LinearLayoutManager.VERTICAL, true).apply { stackFromEnd = true }
         subscribeToStores()
-        PhotoActionCreator.syncToServer()
+        //PhotoActionCreator.syncToServer()
+        photoAdapter = PhotoAdapter(ArrayList(), this)
         PhotoActionCreator.loadPhotos()
     }
 
     private fun subscribeToStores() {
         photoStore.observable()
                 .subscribe {
-                    renderForPhotoStore()
+                    renderForPhotoStore(it)
                 }.let { subscriptions.add(it) }
         uploadStore.observable()
                 .subscribe {
-                    renderForUploadStore()
+                    renderForUploadStore(it)
                 }.let { subscriptions.add(it) }
     }
 
-    private fun renderForPhotoStore() {
-        photoStore.action?.let { action ->
-            when (action.type) {
-                PhotoActionCreator.GET_PHOTOS -> {
-                    if (!action.error) {
-                        showPhotos(photoStore.photos)
-                    } else {
-                        // Handle errors
-                    }
+    private fun renderForPhotoStore(action: Action) {
+        when (action.type) {
+            PhotoActionCreator.GET_PHOTOS -> {
+                if (!action.error) {
+                    showPhotos(photoStore.photos)
+                } else {
+                    // Handle errors
                 }
-                PhotoActionCreator.SAVE_PHOTO -> {
-                    if (!action.error) {
-                        photoStore.photo.let {
-                            addToPhotos(it)
-                            showEditPhotoDetail(it)
-                        }
-                    }
-                }
-                PhotoActionCreator.DELETE_PHOTO -> {
-                    if (!action.error) {
-                        removeFromPhotos(photoStore.photo)
-                    }
-                }
-                PhotoActionCreator.UPDATE_PHOTO -> {
-                    if (!action.error) {
-                        updatePhoto(photoStore.photo)
-                    }
-                }
-                PhotoActionCreator.PHOTO_SYNCED -> {
-                    if (!action.error) {
-                        setPhotoAsSynced(photoStore.photo)
+            }
+            PhotoActionCreator.SAVE_PHOTO -> {
+                if (!action.error) {
+                    photoStore.photo.let {
+                        addToPhotos(it)
+                        showEditPhotoDetail(it)
                     }
                 }
             }
+            PhotoActionCreator.DELETE_PHOTO -> {
+                if (!action.error) {
+                    removeFromPhotos(photoStore.photo)
+                }
+            }
+            PhotoActionCreator.UPDATE_PHOTO -> {
+                if (!action.error) {
+                    updatePhoto(photoStore.photo)
+                }
+            }
+            PhotoActionCreator.PHOTO_SYNCED -> {
+                if (!action.error) {
+                    setPhotoAsSynced(photoStore.photo)
+                }
+            }
         }
+
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun renderForUploadStore() {
-        uploadStore.action?.let { action ->
-            when (action.type) {
-                PhotoActionCreator.UPDATE_PHOTO_UPLOAD_PROGRESS -> {
-                    if (!action.error) {
-                        Log.d("upload", (uploadStore.uploadProgress.first as Photo).checksum)
-                        Log.d("upload", uploadStore.uploadProgress.second.toString())
-                        photoAdapter.updatePhotoUploadProgress(uploadStore.uploadProgress as Pair<Photo, Float>)
-                    } else {
+    private fun renderForUploadStore(action: Action) {
+        when (action.type) {
+            PhotoActionCreator.UPDATE_PHOTO_UPLOAD_PROGRESS -> {
+                if (!action.error) {
+                    Log.d("upload", (uploadStore.uploadProgress.first as Photo).checksum)
+                    Log.d("upload", uploadStore.uploadProgress.second.toString())
+                    photoAdapter.updatePhotoUploadProgress(uploadStore.uploadProgress as Pair<Photo, Float>)
+                } else {
 
-                    }
-                }
-                PhotoActionCreator.PHOTO_UPLOADED -> {
-                    if (!action.error) {
-
-                    } else {
-                        Log.d("uploaded", (action.payload as AppError).message)
-                    }
-                }
-                else -> {
                 }
             }
+            PhotoActionCreator.PHOTO_UPLOADED -> {
+                if (!action.error) {
+
+                } else {
+                    Log.d("uploaded", (action.payload as AppError).message)
+                }
+            }
+            else -> {
+            }
         }
+
     }
 
     override fun onDestroy() {
@@ -148,6 +147,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
             Pair(it, 0f)
         }
         photoAdapter = PhotoAdapter(uploadProgressPair as ArrayList<Pair<Photo, Float>>, this)
+
         photo_recycler_view.adapter = photoAdapter
     }
 
