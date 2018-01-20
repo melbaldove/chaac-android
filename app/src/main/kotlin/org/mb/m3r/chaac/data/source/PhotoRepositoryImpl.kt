@@ -16,7 +16,7 @@ class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepo
         return local.getPhoto(key)
     }
 
-    override fun getPhotos(): Flowable<Photo> = local.getPhotos().filter({it.status != "DELETING"})
+    override fun getPhotos(): Flowable<Photo> = local.getPhotos().filter({ it.status != "DELETING" })
 
     override fun createPhoto(photo: Photo): Single<Photo> {
         remote.createPhoto(photo)
@@ -57,16 +57,21 @@ class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepo
     }
 
     override fun deletePhoto(photo: Photo): Completable {
-        return local.updatePhoto(photo.copy(status = "DELETING"))
-                .flatMapCompletable(remote::deletePhoto)
-                .concatWith(local.deletePhoto(photo))
+        return if(photo.status == "NEW") {
+            local.deletePhoto(photo)
+        }
+        else {
+            local.updatePhoto(photo.copy(status = "DELETING"))
+                    .flatMapCompletable(remote::deletePhoto)
+                    .concatWith(local.deletePhoto(photo))
+        }
     }
 
     override fun syncToServer() {
         val photos = local.getPhotos()
                 .filter { photo -> photo.status != "SYNCED" }
                 .flatMap { photo ->
-                    when(photo.status) {
+                    when (photo.status) {
                         "NEW" -> {
                             remote.createPhoto(photo)
                                     .subscribeOn(Schedulers.newThread())
