@@ -91,7 +91,9 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
     private fun deletePhoto() {
         (action?.payload as Photo).let {
             FileUtil.deleteFile(it.path)
-            photoRepo.deletePhoto(it)
+            photoRepo.deletePhoto(it).subscribe({}, {
+                Log.e("deleteError", it.message, it)
+            })
             photo = it
         }
         notifyChange()

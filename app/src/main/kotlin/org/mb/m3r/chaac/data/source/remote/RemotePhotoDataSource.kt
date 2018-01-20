@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.data.source.remote
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -49,7 +50,7 @@ class RemotePhotoDataSource(private val api: ChaacAPI, private val tokenReposito
         map.put("photo", photo)
         return tokenRepository.getToken()
                 .flatMap { token ->
-                    api.updatePhoto(token.token, token.userId, photo.id!!.toString(), map)
+                    api.updatePhoto(token.token, token.userId, photo.id.toString(), map)
                 }
                 .map { response ->
                     response.data
@@ -60,7 +61,10 @@ class RemotePhotoDataSource(private val api: ChaacAPI, private val tokenReposito
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun deletePhoto(photo: Photo) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun deletePhoto(photo: Photo): Completable {
+            return tokenRepository.getToken()
+                    .flatMapCompletable { token ->
+                        api.deletePhoto(token.token, token.userId, photo.id.toString())
+                    }
     }
 }

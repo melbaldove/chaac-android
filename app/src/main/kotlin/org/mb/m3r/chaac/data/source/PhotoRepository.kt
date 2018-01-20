@@ -1,5 +1,6 @@
 package org.mb.m3r.chaac.data.source
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.mb.m3r.chaac.data.Photo
@@ -14,7 +15,7 @@ interface PhotoRepository {
 
     fun getPhotos(): Flowable<Photo>
 
-    fun deletePhoto(photo: Photo)
+    fun deletePhoto(photo: Photo): Completable
 
     fun getPhoto(key: String): Single<Photo>
 }
