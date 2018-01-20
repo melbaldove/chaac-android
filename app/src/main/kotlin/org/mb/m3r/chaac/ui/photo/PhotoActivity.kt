@@ -1,53 +1,49 @@
 package org.mb.m3r.chaac.ui.photo
 
-import android.content.Intent
-import android.net.Uri
+import android.net.NetworkInfo
 import android.os.Bundle
-import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
-import butterknife.ButterKnife
-import butterknife.OnClick
+import com.github.pwittchen.reactivenetwork.library.rx2.Connectivity
+import com.github.pwittchen.reactivenetwork.library.rx2.ConnectivityPredicate
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import org.mb.m3r.chaac.R
-import org.mb.m3r.chaac.util.ChaacUtil
-import javax.inject.Inject
+import org.mb.m3r.chaac.ui.base.BaseActivity
+import org.mb.m3r.chaac.util.ActivityUtil
+import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 
 
-class PhotoActivity : AppCompatActivity(), PhotoContract.View {
+class PhotoActivity : BaseActivity() {
 
-    @Inject
-    lateinit var presenter: PhotoContract.Presenter
+    lateinit var netConnectivityObservable: Observable<Connectivity>
 
-    private var imageTempPath: String? = null
-
-    val REQUEST_IMAGE_CAPTURE = 20
-    val REQUEST_SAVE_IMAGE = 21
+    val subscriptions = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
-    }
+        activityComponent.inject(this)
 
-    override fun addPictures() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        if (savedInstanceState == null) {
+            ActivityUtil.addFragmentToActivity(supportFragmentManager, R.id.frag_container, PhotoFragment())
 
-    @OnClick(R.id.btnCamera)
-    fun cameraOnClick() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            ChaacUtil.createTempImageFile().let {
-                imageTempPath = it.absolutePath
-                val uri = Uri.fromFile(it)
-                putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            }
         }
+        initNetConnectivityObservable()
 
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        netConnectivityObservable.subscribe({
+            PhotoActionCreator.syncToServer()
+        }).let {
+            subscriptions.add(it)
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //presenter.savePictureFromTemp(imageTempPath!!)
-        }
+    private fun initNetConnectivityObservable() {
+        netConnectivityObservable = ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .compose(SchedulerUtil.ioToUi())
+                .filter(ConnectivityPredicate.hasState(NetworkInfo.State.CONNECTED))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        subscriptions.clear()
     }
 }

@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Chaac</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="header_navigation">Header Navigation</string>
+    <string name="my_account">My Account</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="chaac">Chaac</string>
+    <string name="photoView_desc">captured image</string>
+    <string name="no_caption">No Caption</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
