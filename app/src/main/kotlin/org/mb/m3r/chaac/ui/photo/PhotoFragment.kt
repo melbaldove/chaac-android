@@ -24,6 +24,7 @@ import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -242,6 +243,15 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         photoAdapter.getPhoto(position).let {
             showEditPhotoDetail(it)
         }
+    }
+
+    override fun onPhotoClick(path: String) {
+        val intent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            setDataAndType(FileUtil.getUriForFile(context, File(path)), "image/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(intent)
     }
 
     private fun setPhotoAsSynced(photo: Photo) {

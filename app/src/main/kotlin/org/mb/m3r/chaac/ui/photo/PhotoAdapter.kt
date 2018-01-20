@@ -23,6 +23,8 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
         fun onDeletePhoto(position: Int)
 
         fun onEditPhoto(position: Int)
+
+        fun onPhotoClick(path: String)
     }
 
     private val viewBinderHelper = ViewBinderHelper()
@@ -62,6 +64,9 @@ class PhotoAdapter(val photos: ArrayList<Pair<Photo, Float>>, val listener: Call
             }
             deleteButton.setOnClickListener { _ ->
                 listener.onDeletePhoto(this.adapterPosition)
+            }
+            imageView.setOnClickListener {
+                listener.onPhotoClick(photo.path)
             }
 
             GlideApp.with(view.context)
