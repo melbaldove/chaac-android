@@ -42,7 +42,7 @@ class UploadStore : Store() {
 
     private fun photoUploaded(action: Action) {
         if (action.payload is Throwable) {
-            notifyError(AppError(action.payload))
+            notifyError(action , AppError(action.payload))
         } else {
             action.payload?.let {
                 uploadedFile = it

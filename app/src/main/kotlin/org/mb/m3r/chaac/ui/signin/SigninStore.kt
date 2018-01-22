@@ -59,7 +59,7 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                     notifyChange(action)
 
                 }, {
-                    notifyError(AppError(it))
+                    notifyError(action, AppError(it))
                 })
     }
 
@@ -70,7 +70,7 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                     this.token = token
                     notifyChange(action)
                 }, { throwable ->
-                    notifyError(AppError(throwable))
+                    notifyError(action, AppError(throwable))
                 })
     }
 }
