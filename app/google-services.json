@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "770095215339",
+    "firebase_url": "https://chaac-8c75d.firebaseio.com",
+    "project_id": "chaac-8c75d",
+    "storage_bucket": "chaac-8c75d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770095215339:android:36eb5d0edb77c509",
+        "android_client_info": {
+          "package_name": "org.mb.m3r.chaac"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770095215339-leq3ki908q3905l7eku8ontmnl091s2p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mb.m3r.chaac",
+            "certificate_hash": "fa33f09d3ccb500ac60c7908340199818fced96e"
+          }
+        },
+        {
+          "client_id": "770095215339-001tljudtiuettmak3tsiekgcat1f9t0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgxH2s3ORaxZcsOEem0n3hI_FHmXD-ojo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770095215339-001tljudtiuettmak3tsiekgcat1f9t0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
