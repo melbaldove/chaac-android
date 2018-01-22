@@ -33,8 +33,8 @@ class NetworkModule {
     @Provides
     @PerApplication
     @Named("chaac")
-    fun provideRetrofit(client: OkHttpClient): Retrofit {
-        return retrofitCreator(client, ChaacAPI.URL)
+    fun provideRetrofit(client: OkHttpClient, @Named("backendUrl") url: String): Retrofit {
+        return retrofitCreator(client, url)
     }
 
     fun retrofitCreator(client: OkHttpClient, baseUrl: String): Retrofit {

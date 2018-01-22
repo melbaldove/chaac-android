@@ -12,6 +12,7 @@ import org.mb.m3r.chaac.ui.photo.PhotoModule
 import org.mb.m3r.chaac.ui.photo.PhotoStore
 import org.mb.m3r.chaac.ui.signin.SigninModule
 import org.mb.m3r.chaac.ui.signin.SigninStore
+import javax.inject.Named
 
 
 /**
@@ -30,7 +31,10 @@ interface ApplicationComponent {
     interface Builder {
 
         @BindsInstance
-        fun application(application: Application): ApplicationComponent.Builder
+        fun application(application: Application): Builder
+
+        @BindsInstance
+        fun backendURL(@Named("backendUrl") url: String): Builder
 
         fun build(): ApplicationComponent
     }
