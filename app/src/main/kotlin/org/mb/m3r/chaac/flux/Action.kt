@@ -11,7 +11,7 @@ class Action private constructor(
 ) {
     companion object {
         fun create(type: String, payload: Any?): Action {
-            return if (payload is AppError) {
+            return if (payload is Throwable) {
                 Action(type, payload, true)
             } else {
                 Action(type, payload, false)

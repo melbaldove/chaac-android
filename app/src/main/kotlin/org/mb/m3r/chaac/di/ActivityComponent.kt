@@ -6,7 +6,7 @@ import org.mb.m3r.chaac.di.scopes.PerActivity
 import org.mb.m3r.chaac.ui.photo.PhotoActivity
 import org.mb.m3r.chaac.ui.photo.PhotoStore
 import org.mb.m3r.chaac.ui.signin.SigninActivity
-import org.mb.m3r.chaac.ui.signin.SigninStore
+import org.mb.m3r.chaac.ui.signin.SessionStore
 
 /**
  * @author Melby Baldove
@@ -16,7 +16,7 @@ import org.mb.m3r.chaac.ui.signin.SigninStore
 interface ActivityComponent {
     fun photoStore(): PhotoStore
     fun uploadStore(): UploadStore
-    fun signinStore(): SigninStore
+    fun signinStore(): SessionStore
 
     fun inject(photoActivity: PhotoActivity)
     fun inject(signinActivity: SigninActivity)

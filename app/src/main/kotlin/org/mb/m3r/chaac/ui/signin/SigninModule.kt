@@ -14,7 +14,7 @@ import org.mb.m3r.chaac.di.scopes.PerApplication
 class SigninModule {
     @PerApplication
     @Provides
-    fun providesSigninStore(tokenRepository: TokenRepository, chaacAPI: ChaacAPI): SigninStore {
-        return SigninStore(tokenRepository, chaacAPI)
+    fun providesSigninStore(tokenRepository: TokenRepository, chaacAPI: ChaacAPI): SessionStore {
+        return SessionStore(tokenRepository, chaacAPI)
     }
 }

@@ -1,7 +1,10 @@
 package org.mb.m3r.chaac.ui.base
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -9,15 +12,18 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
+import kotlinx.android.synthetic.main.activity_main.*
 import org.mb.m3r.chaac.ChaacApplication
 import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.di.ActivityComponent
 import org.mb.m3r.chaac.di.DaggerActivityComponent
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator
+import org.mb.m3r.chaac.ui.signin.SigninActivity
 
 /**
  * @author Melby Baldove
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     open val layoutRes: Int = R.layout.activity_main
     lateinit var mToggle: ActionBarDrawerToggle
@@ -46,6 +52,7 @@ abstract class BaseActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
         }
+        left_drawer.setNavigationItemSelectedListener(this)
     }
 
     private fun initActivityComponent() {
@@ -67,6 +74,7 @@ abstract class BaseActivity : AppCompatActivity() {
         mToggle.onConfigurationChanged(newConfig)
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
@@ -77,7 +85,26 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.nav_logout -> {
+                SessionActionCreator.logout()
+                navigateToSignInActivity()
+            }
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
     fun setActionBarTitle(title: String) {
         supportActionBar?.title = title
+    }
+
+
+    fun navigateToSignInActivity() {
+        val intent = Intent(this, SigninActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
     }
 }

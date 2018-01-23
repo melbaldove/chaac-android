@@ -4,14 +4,13 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import org.mb.m3r.chaac.ChaacApplication
-import org.mb.m3r.chaac.data.source.PhotoRepository
 import org.mb.m3r.chaac.data.source.RepositoryModule
 import org.mb.m3r.chaac.data.source.remote.UploadStore
 import org.mb.m3r.chaac.di.scopes.PerApplication
 import org.mb.m3r.chaac.ui.photo.PhotoModule
 import org.mb.m3r.chaac.ui.photo.PhotoStore
 import org.mb.m3r.chaac.ui.signin.SigninModule
-import org.mb.m3r.chaac.ui.signin.SigninStore
+import org.mb.m3r.chaac.ui.signin.SessionStore
 import javax.inject.Named
 
 
@@ -23,7 +22,7 @@ import javax.inject.Named
 interface ApplicationComponent {
     fun photoStore(): PhotoStore
     fun uploadStore(): UploadStore
-    fun signinStore(): SigninStore
+    fun signinStore(): SessionStore
 
     fun inject(app: ChaacApplication)
 

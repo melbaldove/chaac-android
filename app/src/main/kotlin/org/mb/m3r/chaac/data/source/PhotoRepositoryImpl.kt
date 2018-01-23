@@ -1,6 +1,5 @@
 package org.mb.m3r.chaac.data.source
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -9,7 +8,9 @@ import io.reactivex.schedulers.Schedulers
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.local.LocalPhotoRepository
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator
 import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
+import retrofit2.HttpException
 
 class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepository) : PhotoRepositoryMediator {
     override fun getPhoto(key: String): Single<Photo> {
@@ -19,18 +20,17 @@ class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepo
     override fun getPhotos(): Flowable<Photo> = local.getPhotos().filter({ it.status != "DELETING" })
 
     override fun createPhoto(photo: Photo): Single<Photo> {
-        remote.createPhoto(photo)
-                .subscribeOn(Schedulers.newThread())
+        uploadPhoto(photo)
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { photoResponse ->
-                    val updatedPhoto = photo.copy(id = photoResponse.id, status = "UPLOADED")
-                    local.updatePhoto(updatedPhoto)
-                }
                 .subscribe({
                     PhotoActionCreator.photoUploaded(it)
                 }, { error ->
-                    Log.e("threadingError", error.message, error)
-                    PhotoActionCreator.photoUploaded(error)
+                    if (error is HttpException && error.code() == 401) {
+                        SessionActionCreator.invalidToken()
+                    } else {
+                        PhotoActionCreator.photoUploaded(error)
+                    }
+
                 })
         return local.createPhoto(photo.copy(status = "NEW"))
     }
@@ -41,15 +41,14 @@ class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepo
                 local.updatePhoto(photo)
             }
             else -> {
-                remote.updatePhoto(photo)
+                remoteUpdatePhoto(photo)
                         .compose(SchedulerUtil.ioToUi())
-                        .flatMap {
-                            local.updatePhoto(photo.copy(status = "SYNCED"))
-                        }
                         .subscribe({
                             PhotoActionCreator.photoSynced(it)
-                        }, {
-                            Log.d("error", it.message)
+                        }, { error ->
+                            if (error is HttpException && error.code() == 401) {
+                                SessionActionCreator.invalidToken()
+                            }
                         })
                 local.updatePhoto(photo.copy(status = "UNSYNCED"))
             }
@@ -57,55 +56,66 @@ class PhotoRepositoryImpl(val local: LocalPhotoRepository, val remote: PhotoRepo
     }
 
     override fun deletePhoto(photo: Photo): Completable {
-        return if(photo.status == "NEW") {
+        return if (photo.status == "NEW") {
             local.deletePhoto(photo)
-        }
-        else {
+        } else {
             local.updatePhoto(photo.copy(status = "DELETING"))
-                    .flatMapCompletable(remote::deletePhoto)
-                    .concatWith(local.deletePhoto(photo))
+                    .flatMapCompletable(this::remoteDeletePhoto)
         }
     }
 
     override fun syncToServer() {
-        val photos = local.getPhotos()
+        local.getPhotos()
                 .filter { photo -> photo.status != "SYNCED" }
                 .flatMap { photo ->
                     when (photo.status) {
                         "NEW" -> {
-                            remote.createPhoto(photo)
-                                    .subscribeOn(Schedulers.newThread())
-                                    .flatMap { photoResponse ->
-                                        val updatedPhoto = photo.copy(id = photoResponse.id, status = "UPLOADED")
-                                        updatePhoto(updatedPhoto)
-                                    }.toFlowable()
+                            uploadPhoto(photo).toFlowable()
                         }
                         "DELETING" -> {
-                            remote.deletePhoto(photo)
-                                    .concatWith(local.deletePhoto(photo))
-                                    .toFlowable()
-
+                            remoteDeletePhoto(photo).toFlowable()
                         }
                         else -> {
-                            remote.updatePhoto(photo)
-                                    .subscribeOn(Schedulers.newThread())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .flatMap {
-                                        local.updatePhoto(photo.copy(status = "SYNCED"))
-                                    }.toFlowable()
+                            remoteUpdatePhoto(photo).toFlowable()
                         }
                     }
-
                 }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.status == "SYNCED") {
                         PhotoActionCreator.photoSynced(it)
                     } else {
                         PhotoActionCreator.photoUploaded(it)
                     }
-                }, {
+                }, { error ->
+                    if (error is HttpException && error.code() == 401) {
+                        SessionActionCreator.invalidToken()
+                    } else {
+                        PhotoActionCreator.photoUploaded(error)
+                    }
 
                 })
     }
 
+    private fun uploadPhoto(photo: Photo): Single<Photo> {
+        return remote.createPhoto(photo)
+                .subscribeOn(Schedulers.newThread())
+                .flatMap { photoResponse ->
+                    val updatedPhoto = photo.copy(id = photoResponse.id, status = "UPLOADED")
+                    local.updatePhoto(updatedPhoto)
+                }
+    }
+
+    private fun remoteDeletePhoto(photo: Photo): Completable {
+        return remote.deletePhoto(photo)
+                .concatWith(local.deletePhoto(photo))
+    }
+
+    private fun remoteUpdatePhoto(photo: Photo): Single<Photo> {
+        return remote.updatePhoto(photo)
+                .subscribeOn(Schedulers.newThread())
+                .flatMap {
+                    local.updatePhoto(photo.copy(status = "SYNCED"))
+                }
+    }
 }

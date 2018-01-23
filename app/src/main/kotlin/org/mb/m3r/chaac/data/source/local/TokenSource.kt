@@ -2,7 +2,9 @@ package org.mb.m3r.chaac.data.source.local
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import io.reactivex.Completable
 import io.reactivex.Single
+import org.mb.m3r.chaac.data.exceptions.NoTokenException
 import org.mb.m3r.chaac.data.source.TokenRepository
 import org.mb.m3r.chaac.ui.signin.Token
 
@@ -17,7 +19,7 @@ class TokenSource(val sharedPreferences: SharedPreferences) : TokenRepository {
         return Single.create { subscriber ->
             val json = sharedPreferences.getString("token", "NO_TOKEN")
             if(json == "NO_TOKEN") {
-                subscriber.onError(Throwable("No Token"))
+                subscriber.onError(NoTokenException())
             }
             else {
                 val token = gson.fromJson(json, Token::class.java)
@@ -39,4 +41,12 @@ class TokenSource(val sharedPreferences: SharedPreferences) : TokenRepository {
             }
         }
     }
+
+    override fun deleteToken(token: Token): Completable {
+        return Completable.create { subscriber ->
+            sharedPreferences.edit().remove("token").apply()
+            subscriber.onComplete()
+        }
+    }
+
 }

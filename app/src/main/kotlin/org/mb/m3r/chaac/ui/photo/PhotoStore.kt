@@ -54,7 +54,7 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
                     photos = photoList
                     notifyChange(action)
                 }, { throwable ->
-                    // TODO: Handle errors
+                    notifyError(action, throwable)
                 })
     }
 
@@ -65,8 +65,10 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
                 .subscribe({
                     photo = it
                     notifyChange(action)
-                }, {
-                    Log.e("uploadError", it.message, it)
+                }, { throwable ->
+                    Log.e("uploadError", throwable.message, throwable)
+                    notifyError(action, throwable)
+
                 })
     }
 
@@ -81,8 +83,10 @@ class PhotoStore(private val photoRepo: PhotoRepositoryMediator) : Store() {
                     .subscribe({
                         photo = it
                         notifyChange(action)
-                    }, {
+                    }, { throwable ->
                         // TODO: Handle errors
+                        notifyError(action, throwable)
+
                     })
         }
     }

@@ -18,10 +18,11 @@ import org.mb.m3r.chaac.R
 import org.mb.m3r.chaac.data.Photo
 import org.mb.m3r.chaac.data.source.remote.UploadStore
 import org.mb.m3r.chaac.flux.Action
-import org.mb.m3r.chaac.flux.AppError
 import org.mb.m3r.chaac.ui.SnappingLinearLayoutManager
 import org.mb.m3r.chaac.ui.base.BaseActivity
 import org.mb.m3r.chaac.ui.base.BaseFragment
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator
+import org.mb.m3r.chaac.ui.signin.SessionStore
 import org.mb.m3r.chaac.util.ActivityUtil
 import org.mb.m3r.chaac.util.FileUtil
 import java.io.File
@@ -41,6 +42,7 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
 
     @Inject lateinit var photoStore: PhotoStore
     @Inject lateinit var uploadStore: UploadStore
+    @Inject lateinit var sessionStore: SessionStore
     var test = 0f
 
     val subscriptions = CompositeDisposable()
@@ -72,6 +74,10 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
         uploadStore.observable()
                 .subscribe {
                     renderForUploadStore(it)
+                }.let { subscriptions.add(it) }
+        sessionStore.observable()
+                .subscribe {
+                    renderForSessionStore(it)
                 }.let { subscriptions.add(it) }
     }
 
@@ -127,13 +133,22 @@ class PhotoFragment : BaseFragment(), PhotoAdapter.Callback {
                 if (!action.error) {
 
                 } else {
-                    Log.d("uploaded", (action.payload as AppError).message)
+                    Log.d("uploaded", (action.payload as Throwable).message)
                 }
             }
             else -> {
             }
         }
+    }
 
+    private fun renderForSessionStore(action: Action) {
+        when (action.type) {
+            SessionActionCreator.INVALID_TOKEN -> {
+                if (!action.error) {
+                    (activity as BaseActivity).navigateToSignInActivity()
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

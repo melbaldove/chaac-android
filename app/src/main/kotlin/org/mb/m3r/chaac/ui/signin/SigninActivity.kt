@@ -13,8 +13,9 @@ import org.mb.m3r.chaac.di.ActivityComponent
 import org.mb.m3r.chaac.di.DaggerActivityComponent
 import org.mb.m3r.chaac.flux.Action
 import org.mb.m3r.chaac.ui.photo.PhotoActivity
-import org.mb.m3r.chaac.ui.signin.SigninActionCreator.AUTHENTICATE_CREDENTIALS
-import org.mb.m3r.chaac.ui.signin.SigninActionCreator.CHECK_FOR_TOKEN
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.AUTHENTICATE_CREDENTIALS
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.CHECK_FOR_TOKEN
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.LOG_OUT
 import javax.inject.Inject
 
 /**
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class SigninActivity : AppCompatActivity() {
     private val layoutRes: Int = R.layout.activity_signin
 
-    @Inject lateinit var signinStore: SigninStore
+    @Inject lateinit var sessionStore: SessionStore
     lateinit var activityComponent: ActivityComponent
 
     private val subscriptions = CompositeDisposable()
@@ -36,7 +37,7 @@ class SigninActivity : AppCompatActivity() {
         activityComponent.inject(this)
         ButterKnife.bind(this)
         subscribeToStores()
-        SigninActionCreator.checkForToken()
+        SessionActionCreator.checkForToken()
     }
 
     private fun initActivityComponent() {
@@ -48,13 +49,13 @@ class SigninActivity : AppCompatActivity() {
     }
 
     private fun subscribeToStores() {
-        signinStore.observable()
+        sessionStore.observable()
                 .subscribe({
-                    renderForSigninStore(it)
+                    renderForSessionStore(it)
                 }).let { subscriptions.add(it) }
     }
 
-    private fun renderForSigninStore(action: Action) {
+    private fun renderForSessionStore(action: Action) {
         when (action.type) {
             CHECK_FOR_TOKEN -> {
                 if (!action.error) {
@@ -87,6 +88,6 @@ class SigninActivity : AppCompatActivity() {
         // TODO: DO INPUT VALIDATION LATER
         val password = text_password.editText!!.text!!.toString()
         val username = text_username.editText!!.text!!.toString()
-        SigninActionCreator.authenticateCredentials(username, password)
+        SessionActionCreator.authenticateCredentials(username, password)
     }
 }

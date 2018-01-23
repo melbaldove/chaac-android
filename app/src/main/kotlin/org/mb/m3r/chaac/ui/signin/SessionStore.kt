@@ -3,20 +3,21 @@ package org.mb.m3r.chaac.ui.signin
 import org.mb.m3r.chaac.data.source.TokenRepository
 import org.mb.m3r.chaac.data.source.remote.ChaacAPI
 import org.mb.m3r.chaac.flux.Action
-import org.mb.m3r.chaac.flux.AppError
 import org.mb.m3r.chaac.flux.Dispatcher
 import org.mb.m3r.chaac.flux.Store
-import org.mb.m3r.chaac.ui.signin.SigninActionCreator.AUTHENTICATE_CREDENTIALS
-import org.mb.m3r.chaac.ui.signin.SigninActionCreator.CHECK_FOR_TOKEN
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.AUTHENTICATE_CREDENTIALS
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.CHECK_FOR_TOKEN
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.INVALID_TOKEN
+import org.mb.m3r.chaac.ui.signin.SessionActionCreator.LOG_OUT
 import org.mb.m3r.chaac.util.schedulers.SchedulerUtil
 
 /**
  * @author Melby Baldove
  * melqbaldove@gmail.com
  */
-class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Store() {
+class SessionStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Store() {
     override val supportedActions: Array<String>
-        get() = arrayOf(CHECK_FOR_TOKEN, AUTHENTICATE_CREDENTIALS)
+        get() = arrayOf(CHECK_FOR_TOKEN, AUTHENTICATE_CREDENTIALS, LOG_OUT, INVALID_TOKEN)
 
     var token: Token? = null
         private set
@@ -36,10 +37,15 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                 AUTHENTICATE_CREDENTIALS -> {
                     authenticateCredentails(action)
                 }
+                LOG_OUT -> {
+                    logout(action)
+                }
+                INVALID_TOKEN -> {
+                    logout(action)
+                }
             }
         }
     }
-
 
     private fun authenticateCredentails(action: Action) {
         val username = (action.payload as Pair<*, *>).first as String
@@ -59,7 +65,7 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                     notifyChange(action)
 
                 }, {
-                    notifyError(action, AppError(it))
+                    notifyError(action, it)
                 })
     }
 
@@ -70,7 +76,18 @@ class SigninStore(val tokenRepository: TokenRepository, val api: ChaacAPI) : Sto
                     this.token = token
                     notifyChange(action)
                 }, { throwable ->
-                    notifyError(action, AppError(throwable))
+                    notifyError(action, throwable)
+                })
+    }
+
+    private fun logout(action: Action) {
+        tokenRepository.getToken()
+                .compose(SchedulerUtil.ioToUi())
+                .flatMapCompletable(tokenRepository::deleteToken)
+                .subscribe({
+                    notifyChange(action)
+                }, {
+                    notifyError(action, it)
                 })
     }
 }

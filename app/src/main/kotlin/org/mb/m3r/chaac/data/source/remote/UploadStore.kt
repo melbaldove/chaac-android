@@ -1,7 +1,6 @@
 package org.mb.m3r.chaac.data.source.remote
 
 import org.mb.m3r.chaac.flux.Action
-import org.mb.m3r.chaac.flux.AppError
 import org.mb.m3r.chaac.flux.Dispatcher
 import org.mb.m3r.chaac.flux.Store
 import org.mb.m3r.chaac.ui.photo.PhotoActionCreator.PHOTO_UPLOADED
@@ -42,7 +41,7 @@ class UploadStore : Store() {
 
     private fun photoUploaded(action: Action) {
         if (action.payload is Throwable) {
-            notifyError(action , AppError(action.payload))
+            notifyError(action, action.payload)
         } else {
             action.payload?.let {
                 uploadedFile = it

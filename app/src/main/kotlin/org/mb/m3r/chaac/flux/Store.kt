@@ -33,7 +33,7 @@ abstract class Store {
         mPublisher.onNext(action)
     }
 
-    protected fun notifyError(action: Action, error: AppError) {
+    protected fun notifyError(action: Action, error: Throwable) {
             val errorAction =  Action.create(action.type, error)
             notifyChange(errorAction)
 
